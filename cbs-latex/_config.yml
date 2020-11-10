@@ -1,0 +1,70 @@
+# Basic configuration for Just the Docs
+# bundle exec jekyll serve
+
+# For MathJax/LaTeX, add a supplementary configuration, e.g.:
+# bundle exec jekyll serve --config _config.yml,_mathjax_svg.yml
+
+title: CBS-LaTeX
+email: plancomps@gmail.com
+description: >- # this means to ignore newlines until "baseurl:"
+  This site illustrates how CBS specifications of languages and funcons could be
+  formatted for the web using LaTeX, Markdown, and MathJax. One of the aims is
+  for CBS on web pages look like the CBS in published papers, using mathematical
+  symbols instead of plain text.
+baseurl: "/cbs-latex" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+# twitter_username: jekyllrb
+github_username:  plancomps-admin
+
+# Build settings
+remote_theme: pmarsceill/just-the-docs
+plugins:
+  # - jekyll-feed
+  - jekyll-remote-theme
+  
+defaults:
+  -
+    scope:
+      path: "docs" # an empty string here means all files in the project
+      type: "pages"
+    values:
+      layout: "default"
+
+# Aux links for the upper right navigation
+aux_links:
+  "CBS LaTeX on GitHub":
+    - "//github.com/plancomps/cbs-latex"
+
+compress_html:
+  blanklines: true
+  # ignore:
+  #   envs: all
+
+# MathJax 3 http://docs.mathjax.org/en/latest/web/configuration.html
+
+# Use tex-svg (the tex-chtml combination has major issues)
+
+mathjax:
+  source: 
+     "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"
+  config:
+    "{ 
+      tex: { 
+        tags: 'ams',
+        packages: {'[+]': ['textmacros']}
+      },
+      loader: {
+        load: ['[tex]/textmacros']
+      },
+      chtml: {
+        mtextInheritFont: true,
+        displayAlign: 'left',
+        displayIndent: '2em'
+      }, 
+       svg: { 
+        mtextInheritFont: true, 
+        displayAlign: 'left', 
+        displayIndent: '2em',
+        fontCache: 'global'
+      }
+    }"
