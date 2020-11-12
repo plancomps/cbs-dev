@@ -181,13 +181,13 @@ The macros format their arguments as follows.
 
 : Break part of a displayed specification into lines, aligning on `&`.
 
-## Macro definitions
+## MathJax macro definitions
 
 The macro definitions used for MathJax are listed below.
 Corresponding definitions for use in $$\LaTeX$$ are to be added.
 
-> MathJax 3.1.1 does not support `\begingroup...\endgroup`.
-> To use the same macro definitions on different pages, they currently need to be specified (less perspicuously) in the MathJax configuration.
+> MathJax 3.1.1 does not yet support `\begingroup...\endgroup`.
+> To use the same macro definitions on different pages, it appears that they currently need to be specified (less perspicuously) in the MathJax configuration.
 
 ```latex
 \newcommand{\KEY}[1]{\text{\color{Gray}\mit{#1}\;\;}}
@@ -222,4 +222,49 @@ Corresponding definitions for use in $$\LaTeX$$ are to be added.
 \newcommand{\LanguagesSIMPLE}[2]{\href{https://plancomps.github.io/CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-#1\##2}}
 \newcommand{\FunconsFlowing}[1]{\href{https://plancomps.github.io/CBS-beta/Funcons-beta/Computations/Normal/Flowing\##1}}
 \newcommand{\FunconsBinding}[1]{\href{samples.html\##1}}
+```
+
+## $$\LaTeX$$ macro definitions
+
+The macro definitions used for $$\LaTeX$$ are listed below.
+
+```latex
+\documentclass[fleqn]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\KEY}[1]{\textsf{\textit{\color{Gray}#1}}}
+\newcommand{\VAR}[1]{\mathit{\small#1}}
+\newcommand{\LEX}[1]{\text{\texttt{#1}}}
+\newcommand{\LBRACE}{\char`\{}
+\newcommand{\RBRACE}{\char`\}}
+\newcommand{\STRING}[1]{\text{``\texttt{#1}''}}
+\newcommand{\ATOM}[1]{\text{`\texttt{#1}'}}
+
+\newcommand{\NAME}[2][\PLAIN]{#1{Name_#2}{\textsf{\color{Mahogany}#2}}}
+\newcommand{\SYN}[2][\PLAIN]{#1{SyntaxName_#2}{\textsf{\color{ForestGreen}#2}}}
+\newcommand{\SEM}[2][\PLAIN]{#1{SemanticsName_#2}{\textsf{\color{Blue}#2}}}
+
+\newcommand{\PLAIN}[1]{}
+\newcommand{\DECL}[1]{\hypertarget{#1}}
+\newcommand{\REF}[1]{\hyperlink{#1}}
+\newcommand{\HYPER}[2]{#1{#2}}
+
+\newcommand{\GROUP}[1]{ {\color{Gray}(} #1 {\color{Gray})} }
+\newcommand{\PLUS}{^{\text{\bf+}}}
+\newcommand{\STAR}{^{\boldsymbol{\ast}}}
+\newcommand{\QUERY}{^{\text{\bf?}}}
+\newcommand{\PHRASE}[1]{[\![\, #1 \,]\!]}
+
+\newcommand{\RULE}[2]{\frac{#1}{#2}}
+\newcommand{\AXIOM}[1]{\begin{aligned}#1\end{aligned}}
+\newcommand{\TO}{\mathop{\Rightarrow}}
+\newcommand{\TRANS}{\longrightarrow}
+
+\newcommand{\LanguagesSIMPLE}[2]{\href{https://plancomps.github.io/CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-#1\##2}}
+\newcommand{\FunconsFlowing}[1]{\href{https://plancomps.github.io/CBS-beta/Funcons-beta/Computations/Normal/Flowing\##1}}
+\newcommand{\FunconsBinding}[1]{\REF{#1}}
 ```
