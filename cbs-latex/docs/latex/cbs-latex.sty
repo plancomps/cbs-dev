@@ -1,0 +1,75 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cbs-latex}[2021/01/02 CBS-LaTeX package]
+
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{stmaryrd}
+\RequirePackage{textcomp}
+\RequirePackage[dvipsnames]{xcolor}
+\RequirePackage[hidelinks]{hyperref}
+
+\newcommand{\GRAYCOLOR}{\color{Gray}}
+\newcommand{\REDCOLOR}{\color{Mahogany}}
+\newcommand{\GREENCOLOR}{\color{ForestGreen}}
+\newcommand{\BLUECOLOR}{\color{RoyalBlue}}
+
+\newcommand{\KEY}[1]{\textsf{\textsl{\GRAYCOLOR #1}}}
+\newcommand{\STRING}[1]{\text{``\texttt{#1}''}}
+\newcommand{\ATOM}[1]{\text{`\texttt{#1}'}}
+\newcommand{\LEX}[1]{\text{\texttt{#1}}}
+
+\newcommand{\HASH}{\char`\#}
+\newcommand{\DOLLAR}{\char`\$}
+\newcommand{\PERCENT}{\char`\%}
+\newcommand{\AMPERSAND}{\char`\&}
+\newcommand{\APOSTROPHE}{\textquotesingle}
+\newcommand{\PLUSCHAR}{\char`\+}
+\newcommand{\HYPHEN}{\char`\-}
+\newcommand{\LESS}{\char`\<}
+\newcommand{\GREATER}{\char`\>}
+\newcommand{\BACKSLASH}{\char`\\}
+\newcommand{\CARET}{\char`\^}
+\newcommand{\UNDERSCORE}{\char`\_}
+\newcommand{\GRAVE}{\`{}}
+\newcommand{\LEFTBRACE}{\char`\{}
+\newcommand{\BAR}{\char`\|}
+\newcommand{\RIGHTBRACE}{\char`\}}
+\newcommand{\TILDE}{\char`\~}
+
+% \NAME{name} highlights the name
+% \NAME[\DECL]{name} declares Name.name as the target of links to name
+% \NAME[\REF]{name} links name to the target Name.name in the current file
+% \NAME[\HYPER{url}{file}]{name} links name to Name.name at url/file/file.pdf
+% Similarly for \VAR{partvariable}, \SYN{syntaxname}, \SEM{semanticsName},
+% and \SECT{sectionnumber}
+
+\newcommand{\VAR}[2][\PLAIN]{#1{PartVariable}{#2}{\textsf{\textsl{#2}}}}
+\newcommand{\SUB}[1]{_{\textsf{#1}}}
+\newcommand{\NAME}[2][\PLAIN]{\textstyle\mathop{#1{Name}{#2}{\textsf{\REDCOLOR #2}}}}
+\newcommand{\SYN}[2][\PLAIN]{#1{SyntaxName}{#2}{\textsf{\GREENCOLOR #2}}}
+\newcommand{\SEM}[2][\PLAIN]{#1{SemanticsName}{#2}{\textsf{\BLUECOLOR #2}}}
+\newcommand{\SECT}[2][\PLAIN]{#1{SectionNumber}{#2}{\text{\bf #2}}}
+
+% \hyperdef and \hyperref support both internal and external hyperlinks
+% (whereas \hypertarget and \hyperlink support only internal hyperlinks)
+% See https://tex.stackexchange.com/a/197244 regarding the use of \raisebox
+
+\newcommand{\PLAIN}[2]{}
+\newcommand{\DECL}[2]{\raisebox{1.2\ht\strutbox}{\hyperdef{#1}{#2}{}}}
+\newcommand{\REF}[2]{\hyperref{\jobname}{#1}{#2}}
+\newcommand{\HYPER}[4]{\hyperref{#1/#2/#2}{#3}{#4}}
+
+\newcommand{\LEFTPHRASE}{\llbracket}
+\newcommand{\RIGHTPHRASE}{\rrbracket}
+\newcommand{\LEFTGROUP}{{\GRAYCOLOR (}}
+\newcommand{\RIGHTGROUP}{{\GRAYCOLOR )}}
+\newcommand{\PLUS}{^{\textsf{\tiny\bf+}}}
+\newcommand{\STAR}{^{\raisebox{-0.5ex}{\textsf{\scriptsize*}}}}
+\newcommand{\QUERY}{^{\raisebox{-0.5ex}{\textsf{\scriptsize?}}}}
+
+\newcommand{\RULE}[2]{\frac{\begin{aligned}#1\end{aligned}}{\begin{aligned}#2\end{aligned}}}
+\newcommand{\AXIOM}[1]{\begin{aligned}#1\end{aligned}}
+\newcommand{\TO}{\mathop{\Rightarrow}}
+\newcommand{\TRANS}[1][]{\xrightarrow{~#1~}}
+
+\newcommand{\LATEX}{\textsf{\LaTeX}}

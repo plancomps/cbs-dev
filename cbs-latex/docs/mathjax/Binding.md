@@ -1,0 +1,579 @@
+---
+layout: default
+title: "Binding"
+mathjax: true
+parent: Samples
+
+---
+
+### Binding
+
+
+$$
+\begin{align*}
+  [ ~ 
+  \KEY{Type} ~ & \NAME[\REF]{environments} \\
+  \KEY{Alias} ~ & \NAME[\REF]{envs} \\
+  \KEY{Datatype} ~ & \NAME[\REF]{identifiers} \\
+  \KEY{Alias} ~ & \NAME[\REF]{ids} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{identifier-tagged} \\
+  \KEY{Alias} ~ & \NAME[\REF]{id-tagged} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{fresh-identifier} \\
+  \KEY{Entity} ~ & \NAME[\REF]{environment} \\
+  \KEY{Alias} ~ & \NAME[\REF]{env} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{initialise-binding} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{bind-value} \\
+  \KEY{Alias} ~ & \NAME[\REF]{bind} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{unbind} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{bound-directly} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{bound-value} \\
+  \KEY{Alias} ~ & \NAME[\REF]{bound} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{closed} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{scope} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{accumulate} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{collateral} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{bind-recursively} \\
+  \KEY{Funcon} ~ & \NAME[\REF]{recursive}
+  ~ ]
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Meta-variables} ~ 
+  & \VAR{T} <: \NAME[\HYPER{../../Values}{Value-Types}]{values}
+\end{align*}
+$$
+
+#### Environments
+
+
+$$
+\begin{align*}
+  \KEY{Type} ~  
+  & \NAME[\DECL]{environments}  
+  \leadsto {}
+  \begin{aligned}[t]
+  & \NAME[\HYPER{../../Values/Composite}{Maps}]{maps}
+      (\NAME[\REF]{identifiers}, \\&\quad 
+       \NAME[\HYPER{../../Values}{Value-Types}]{values}\QUERY)
+  \end{aligned}
+\\
+  \KEY{Alias} ~ 
+  & \NAME[\DECL]{envs} = \NAME[\REF]{environments}
+\end{align*}
+$$
+
+
+  An environment represents bindings of identifiers to values.
+  Mapping an identifier to $$( ~ )$$ represents that its binding is hidden.
+  
+  Circularity in environments (due to recursive bindings) is represented using
+  bindings to cut-points called $$\NAME[\HYPER{}{Linking}]{links}$$. Funcons are provided for making
+  declarations recursive and for referring to bound values without explicit
+  mention of links, so their existence can generally be ignored.
+
+
+$$
+\begin{align*}
+  \KEY{Datatype} ~ 
+  & \NAME[\DECL]{identifiers}  
+  \begin{aligned}[t]
+  ~ ::= ~ & 
+  \{ \_ : \NAME[\HYPER{../../Values/Composite}{Strings}]{strings} \} \\
+  ~ \mid ~ & \NAME[\DECL]{identifier-tagged} (\_ : \NAME[\REF]{identifiers}, \_ : \NAME[\HYPER{../../Values}{Value-Types}]{values})
+  \end{aligned}
+\\
+  \KEY{Alias} ~ 
+  & \NAME[\DECL]{ids} = \NAME[\REF]{identifiers}
+\\
+  \KEY{Alias} ~ 
+  & \NAME[\DECL]{id-tagged} = \NAME[\REF]{identifier-tagged}
+\end{align*}
+$$
+
+
+  An identifier is either a string of characters, or an identifier tagged with
+  some value (e.g., with the identifier of a namespace).
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{fresh-identifier} :  \TO \NAME[\REF]{identifiers}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{fresh-identifier}$$ computes an identifier distinct from all previously
+  computed identifiers.
+
+
+$$
+\begin{align*}
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{fresh-identifier} \leadsto \NAME[\REF]{identifier-tagged}
+                                                 (\STRING{generated},   
+                                                  \NAME[\HYPER{}{Generating}]{fresh-atom})
+\end{align*}
+$$
+
+#### Current bindings
+
+
+$$
+\begin{align*}
+  \KEY{Entity} ~ 
+  & \NAME[\DECL]{environment}(\_ : \NAME[\REF]{environments}) \vdash \_ \TRANS  \_
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Alias} ~ 
+  & \NAME[\DECL]{env} = \NAME[\REF]{environment}
+\end{align*}
+$$
+
+
+  The environment entity allows a computation to refer to the current bindings
+  of identifiers to values.
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{initialise-binding}(\VAR{X} :  \TO \VAR{T}) :  \TO \VAR{T} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\HYPER{}{Linking}]{initialise-linking}
+              (\NAME[\HYPER{}{Generating}]{initialise-generating}
+                 (\NAME[\REF]{closed}
+                    (\VAR{X})))
+          \end{aligned}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{initialise-binding}
+    (\VAR{X})$$ ensures that $$\VAR{X}$$ does not depend on non-local bindings.
+  It also ensures that the linking entity (used to represent potentially cyclic
+  bindings) and the generating entity (for creating fresh identifiers) are 
+  initialised.
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{bind-value}(\VAR{I} : \NAME[\REF]{identifiers}, \VAR{V} : \NAME[\HYPER{../../Values}{Value-Types}]{values}) :  \TO \NAME[\REF]{environments} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \{ \VAR{I} \mapsto \VAR{V} \}
+          \end{aligned}
+\\
+  \KEY{Alias} ~ 
+  & \NAME[\DECL]{bind} = \NAME[\REF]{bind-value}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{bind-value}
+    (\VAR{I},   
+     \VAR{X})$$ computes the environment that binds only $$\VAR{I}$$ to the value
+  computed by $$\VAR{X}$$.
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{unbind}(\VAR{I} : \NAME[\REF]{identifiers}) :  \TO \NAME[\REF]{environments} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \{ \VAR{I} \mapsto ( ~ ) \}
+          \end{aligned}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{unbind}
+    (\VAR{I})$$ computes the environment that hides the binding of $$\VAR{I}$$.
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{bound-directly}(\_ : \NAME[\REF]{identifiers}) :  \TO \NAME[\HYPER{../../Values}{Value-Types}]{values}
+\end{align*}
+$$
+
+ 
+  $$\NAME[\REF]{bound-directly}
+    (\VAR{I})$$ returns the value to which $$\VAR{I}$$ is currently bound, if any,
+  and otherwise fails.
+
+  $$\NAME[\REF]{bound-directly}
+    (\VAR{I})$$ does *not* follow links. It is used only in connection with
+  recursively-bound values when references are not encapsulated in abstractions.
+
+
+$$
+\begin{align*}
+  \KEY{Rule} ~ 
+    & \RULE{
+      \NAME[\HYPER{../../Values/Composite}{Maps}]{lookup}
+        (\VAR{$\rho$},   
+         \VAR{I}) \leadsto (\VAR{V} : \NAME[\HYPER{../../Values}{Value-Types}]{values})
+      }{
+      \NAME[\REF]{environment} (\VAR{$\rho$}) \vdash \NAME[\REF]{bound-directly}
+                    (\VAR{I} : \NAME[\REF]{identifiers}) \TRANS \VAR{V}
+      }
+\\
+  \KEY{Rule} ~ 
+    & \RULE{
+      \NAME[\HYPER{../../Values/Composite}{Maps}]{lookup}
+        (\VAR{$\rho$},   
+         \VAR{I}) \leadsto ( ~ )
+      }{
+      \NAME[\REF]{environment} (\VAR{$\rho$}) \vdash \NAME[\REF]{bound-directly}
+                    (\VAR{I} : \NAME[\REF]{identifiers}) \TRANS \NAME[\HYPER{../Abnormal}{Failing}]{fail}
+      }
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{bound-value}(\VAR{I} : \NAME[\REF]{identifiers}) :  \TO \NAME[\HYPER{../../Values}{Value-Types}]{values} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\HYPER{}{Linking}]{follow-if-link}
+              (\NAME[\REF]{bound-directly}
+                 (\VAR{I}))
+          \end{aligned}
+\\
+  \KEY{Alias} ~ 
+  & \NAME[\DECL]{bound} = \NAME[\REF]{bound-value}
+\end{align*}
+$$
+
+ 
+   $$\NAME[\REF]{bound-value}
+    (\VAR{I})$$ inspects the value to which $$\VAR{I}$$ is currently bound, if any,
+   and otherwise fails. If the value is a link, $$\NAME[\REF]{bound-value}
+    (\VAR{I})$$ returns the
+   value obtained by following the link, if any, and otherwise fails. If the 
+   inspected value is not a link, $$\NAME[\REF]{bound-value}
+    (\VAR{I})$$ returns it. 
+   
+   $$\NAME[\REF]{bound-value}
+    (\VAR{I})$$ is used for references to non-recursive bindings and to
+   recursively-bound values when references are encapsulated in abstractions.
+
+
+#### Scope
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{closed}(\VAR{X} :  \TO \VAR{T}) :  \TO \VAR{T}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{closed}
+    (\VAR{X})$$ ensures that $$\VAR{X}$$ does not depend on non-local bindings.
+
+
+$$
+\begin{align*}
+  \KEY{Rule} ~ 
+    & \RULE{
+      \NAME[\REF]{environment} (\NAME[\HYPER{../../Values/Composite}{Maps}]{map}
+                              ( ~ )) \vdash \VAR{X} \TRANS \VAR{X}'
+      }{
+      \NAME[\REF]{environment} (\_) \vdash \NAME[\REF]{closed}
+                    (\VAR{X}) \TRANS \NAME[\REF]{closed}
+                                                               (\VAR{X}')
+      }
+\\
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{closed}
+        (\VAR{V} : \VAR{T}) \leadsto \VAR{V}
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{scope}(\_ : \NAME[\REF]{environments}, \_ :  \TO \VAR{T}) :  \TO \VAR{T}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{scope}
+    (\VAR{D},   
+     \VAR{X})$$ executes $$\VAR{D}$$ with the current bindings, to compute an environment
+  $$\VAR{$\rho$}$$ representing local bindings. It then executes $$\VAR{X}$$ to compute the result,
+  with the current bindings extended by $$\VAR{$\rho$}$$, which may shadow or hide previous
+  bindings.
+  
+  $$\NAME[\REF]{closed}
+    (\NAME[\REF]{scope}
+       (\VAR{$\rho$},    
+        \VAR{X}))$$ ensures that $$\VAR{X}$$ can reference only the bindings
+  provided by $$\VAR{$\rho$}$$.
+
+
+$$
+\begin{align*}
+  \KEY{Rule} ~ 
+    & \RULE{
+      \NAME[\REF]{environment} (\NAME[\HYPER{../../Values/Composite}{Maps}]{map-override}
+                              (\VAR{$\rho$}\SUB{1},   
+                               \VAR{$\rho$}\SUB{0})) \vdash \VAR{X} \TRANS \VAR{X}'
+      }{
+      \NAME[\REF]{environment} (\VAR{$\rho$}\SUB{0}) \vdash \NAME[\REF]{scope}
+                    (\VAR{$\rho$}\SUB{1} : \NAME[\REF]{environments},   
+                     \VAR{X}) \TRANS \NAME[\REF]{scope}
+                                                               (\VAR{$\rho$}\SUB{1},   
+                                                                \VAR{X}')
+      }
+\\
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{scope}
+        (\_ : \NAME[\REF]{environments},   
+         \VAR{V} : \VAR{T}) \leadsto \VAR{V}
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{accumulate}(\_ : ( \TO \NAME[\REF]{environments})\STAR) :  \TO \NAME[\REF]{environments}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{accumulate}
+    (\VAR{D}\SUB{1},   
+     \VAR{D}\SUB{2})$$ executes $$\VAR{D}\SUB{1}$$ with the current bindings, to compute an
+  environment $$\VAR{$\rho$}\SUB{1}$$ representing some local bindings. It then executes $$\VAR{D}\SUB{2}$$ to
+  compute an environment $$\VAR{$\rho$}\SUB{2}$$ representing further local bindings, with the
+  current bindings extended by $$\VAR{$\rho$}\SUB{1}$$, which may shadow or hide previous
+  current bindings. The result is $$\VAR{$\rho$}\SUB{1}$$ extended by $$\VAR{$\rho$}\SUB{2}$$, which may shadow
+  or hide the bindings of $$\VAR{$\rho$}\SUB{1}$$.
+  
+  $$\NAME[\REF]{accumulate}
+    (\_,   
+     \_)$$ is associative, with $$\NAME[\HYPER{../../Values/Composite}{Maps}]{map}
+    ( ~ )$$ as unit, and extends to any
+  number of arguments.
+
+
+$$
+\begin{align*}
+  \KEY{Rule} ~ 
+    & \RULE{
+       \VAR{D}\SUB{1} \TRANS \VAR{D}\SUB{1}'
+      }{
+       \NAME[\REF]{accumulate}
+                    (\VAR{D}\SUB{1},   
+                     \VAR{D}\SUB{2}) \TRANS \NAME[\REF]{accumulate}
+                                                               (\VAR{D}\SUB{1}',   
+                                                                \VAR{D}\SUB{2})
+      }
+\\
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{accumulate}
+        (\VAR{$\rho$}\SUB{1} : \NAME[\REF]{environments},   
+         \VAR{D}\SUB{2}) \leadsto \NAME[\REF]{scope}
+                                                 (\VAR{$\rho$}\SUB{1},   
+                                                  \NAME[\HYPER{../../Values/Composite}{Maps}]{map-override}
+                                                    (\VAR{D}\SUB{2},    
+                                                     \VAR{$\rho$}\SUB{1}))
+\\
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{accumulate}
+        ( ~ ) \leadsto \NAME[\HYPER{../../Values/Composite}{Maps}]{map}
+                                                 ( ~ )
+\\
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{accumulate}
+        (\VAR{D}\SUB{1}) \leadsto \VAR{D}\SUB{1}
+\\
+  \KEY{Rule} ~ 
+    & \NAME[\REF]{accumulate}
+        (\VAR{D}\SUB{1},   
+         \VAR{D}\SUB{2},   
+         \VAR{D}\PLUS) \leadsto \NAME[\REF]{accumulate}
+                                                 (\VAR{D}\SUB{1},   
+                                                  \NAME[\REF]{accumulate}
+                                                    (\VAR{D}\SUB{2},    
+                                                     \VAR{D}\PLUS))
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{collateral}(\VAR{$\rho$}\STAR : \NAME[\REF]{environments}\STAR) :  \TO \NAME[\REF]{environments} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\HYPER{../Abnormal}{Failing}]{checked}
+              \NAME[\HYPER{../../Values/Composite}{Maps}]{map-unite}
+                (\VAR{$\rho$}\STAR)
+          \end{aligned}
+\end{align*}
+$$
+
+ 
+  $$\NAME[\REF]{collateral}
+    (\VAR{D}\SUB{1},   
+     \cdots)$$ pre-evaluates its arguments with the current bindings,
+  and unites the resulting maps, which fails if the domains are not pairwise
+  disjoint.
+
+  $$\NAME[\REF]{collateral}
+    (\VAR{D}\SUB{1},   
+     \VAR{D}\SUB{2})$$ is associative and commutative with $$\NAME[\HYPER{../../Values/Composite}{Maps}]{map}
+    ( ~ )$$ as unit, 
+  and extends to any number of arguments.
+
+
+#### Recurse
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{bind-recursively}(\VAR{I} : \NAME[\REF]{identifiers}, \VAR{E} :  \TO \NAME[\HYPER{../../Values}{Value-Types}]{values}) :  \TO \NAME[\REF]{environments} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\REF]{recursive}
+              (\{ \VAR{I} \}, \\&\quad 
+               \NAME[\REF]{bind-value}
+                 (\VAR{I}, \\&\quad \quad 
+                  \VAR{E}))
+          \end{aligned}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{bind-recursively}
+    (\VAR{I},   
+     \VAR{E})$$ binds $$\VAR{I}$$ to a link that refers to the value of $$\VAR{E}$$, 
+  representing a recursive binding of $$\VAR{I}$$ to the value of $$\VAR{E}$$.
+  Since $$\NAME[\REF]{bound-value}
+    (\VAR{I})$$ follows links, it should not be executed during the
+  evaluation of $$\VAR{E}$$.
+
+
+$$
+\begin{align*}
+  \KEY{Funcon} ~ 
+  & \NAME[\DECL]{recursive}(\VAR{SI} : \NAME[\HYPER{../../Values/Composite}{Sets}]{sets}
+                               (\NAME[\REF]{identifiers}), \VAR{D} :  \TO \NAME[\REF]{environments}) :  \TO \NAME[\REF]{environments} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\REF]{re-close}
+              (\NAME[\REF]{bind-to-forward-links}
+                 (\VAR{SI}), \\&\quad 
+               \VAR{D})
+          \end{aligned}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{recursive}
+    (\VAR{SI},   
+     \VAR{D})$$ executes $$\VAR{D}$$ with potential recursion on the bindings of 
+  the identifiers in the set $$\VAR{SI}$$ (which need not be the same as the set of
+  identifiers bound by $$\VAR{D}$$).
+
+
+$$
+\begin{align*}
+  \KEY{Auxiliary Funcon} ~ 
+  & \NAME[\DECL]{re-close}(\VAR{M} : \NAME[\HYPER{../../Values/Composite}{Maps}]{maps}
+                               (\NAME[\REF]{identifiers}, \\&\quad 
+                                \NAME[\HYPER{}{Linking}]{links}), \VAR{D} :  \TO \NAME[\REF]{environments}) :  \TO \NAME[\REF]{environments} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\REF]{accumulate}
+              (\NAME[\REF]{scope}
+                 (\VAR{M}, \\&\quad \quad 
+                  \VAR{D}), \\&\quad 
+               \NAME[\HYPER{}{Flowing}]{sequential}
+                 (\NAME[\REF]{set-forward-links}
+                    (\VAR{M}), \\&\quad \quad 
+                  \NAME[\HYPER{../../Values/Composite}{Maps}]{map}
+                    ( ~ )))
+          \end{aligned}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{re-close}
+    (\VAR{M},   
+     \VAR{D})$$ first executes $$\VAR{D}$$ in the scope $$\VAR{M}$$, which maps identifiers
+  to freshly allocated links. This computes an environment $$\VAR{$\rho$}$$ where the bound
+  values may contain links, or implicit references to links in abstraction
+  values. It then sets the link for each identifier in the domain of $$\VAR{M}$$ to
+  refer to its bound value in $$\VAR{$\rho$}$$, and returns $$\VAR{$\rho$}$$ as the result.
+
+
+$$
+\begin{align*}
+  \KEY{Auxiliary Funcon} ~ 
+  & \NAME[\DECL]{bind-to-forward-links}(\VAR{SI} : \NAME[\HYPER{../../Values/Composite}{Sets}]{sets}
+                               (\NAME[\REF]{identifiers})) :  \TO \NAME[\HYPER{../../Values/Composite}{Maps}]{maps}
+                                                (\NAME[\REF]{identifiers}, \\&\quad 
+                                                 \NAME[\HYPER{}{Linking}]{links}) \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\HYPER{../../Values/Composite}{Maps}]{map-unite}
+              (\NAME[\HYPER{}{Giving}]{interleave-map}
+                 (\NAME[\REF]{bind-value}
+                    (\NAME[\HYPER{}{Giving}]{given}, \\&\quad \quad \quad 
+                     \NAME[\HYPER{}{Linking}]{fresh-link}
+                       (\NAME[\HYPER{../../Values}{Value-Types}]{values})), \\&\quad \quad 
+                  \NAME[\HYPER{../../Values/Composite}{Sets}]{set-elements}
+                    (\VAR{SI})))
+          \end{aligned}
+\end{align*}
+$$
+
+
+  $$\NAME[\REF]{bind-to-forward-links}
+    (\VAR{SI})$$ binds each identifier in the set $$\VAR{SI}$$ to a
+  freshly allocated link.
+
+
+$$
+\begin{align*}
+  \KEY{Auxiliary Funcon} ~ 
+  & \NAME[\DECL]{set-forward-links}(\VAR{M} : \NAME[\HYPER{../../Values/Composite}{Maps}]{maps}
+                               (\NAME[\REF]{identifiers}, \\&\quad 
+                                \NAME[\HYPER{}{Linking}]{links})) :  \TO \NAME[\HYPER{../../Values/Primitive}{Null}]{null-type} \\
+  & \quad \leadsto {}
+          \begin{aligned}[t]
+          & \NAME[\HYPER{}{Flowing}]{effect}
+              (\NAME[\HYPER{}{Giving}]{interleave-map}
+                 (\NAME[\HYPER{}{Linking}]{set-link}
+                    (\NAME[\HYPER{../../Values/Composite}{Maps}]{map-lookup}
+                       (\VAR{M}, \\&\quad \quad \quad \quad 
+                        \NAME[\HYPER{}{Giving}]{given}), \\&\quad \quad \quad 
+                     \NAME[\REF]{bound-value}
+                       (\NAME[\HYPER{}{Giving}]{given})), \\&\quad \quad 
+                  \NAME[\HYPER{../../Values/Composite}{Sets}]{set-elements}
+                    (\NAME[\HYPER{../../Values/Composite}{Maps}]{map-domain}
+                       (\VAR{M}))))
+          \end{aligned}
+\end{align*}
+$$
+
+
+  For each identifier $$\VAR{I}$$ in the domain of $$\VAR{M}$$, $$\NAME[\REF]{set-forward-links}
+    (\VAR{M})$$ sets the 
+  link to which $$\VAR{I}$$ is mapped by $$\VAR{M}$$ to the current bound value of $$\VAR{I}$$.

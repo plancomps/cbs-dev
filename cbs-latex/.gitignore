@@ -5,3 +5,12 @@ _site
 vendor
 
 Gemfile.lock
+
+.DS_Store
+*.aux
+*.log
+*.markdown.in
+*.markdown.lua
+*.md.tex
+*.out
+*.synctex.gz

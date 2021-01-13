@@ -1,5 +1,6 @@
 ---
 title: Macros
+# has_children: true
 mathjax: true
 ---
 
@@ -15,256 +16,273 @@ mathjax: true
 {:toc}
 </details>
 
-The $$\LaTeX$$ markup for CBS is to be generated from plain CBS specifications.
-It is quite low level, and would be tedious to write manually.
-When included in manuscript sources, however, it should be much easier to tweak than higher-level AST-based markup.
+----
 
-In general, line breaks in plain CBS are to be respected in the $$\LaTeX$$ markup.
-Most of the alignment between related lines should be automatic, but CBS may need enhancing to allow hints to be inserted at various places, to avoid the need for manual adjustment in generated markup.
+Markup using `cbs-latex` is quite low-level.
+This makes it easy to adjust the layout to fit the intended page width, but tedious to write.
+Generation of marked-up CBS from CBS source text is currently being implemented in Spoofax.
 
-## Macro usage
+The macros provided by `cbs-latex` are defined separately for producing PDFs and web pages:
 
-The macros format their arguments as follows.
+- [`cbs-latex.sty`]
+- [MathJax configuration]
 
-### Symbols
+The `cbs-latex` package provides macros that mostly have different definitions for PDFs and web pages.
+It also provides a few macros for complicated or uncommon $$\LATEX$$ commands.
+All macro names are in uppercase, to reduce the risk of clashes with macros defined by other packages.
+They are for use only in math mode.
 
-`\KEY{Keyword}`
+## Required packages
 
-: CBS keyword: 
+When used with $$\LATEX$$, the `cbs-latex` package requires the following packages (all included in TeXLive):
 
-  `\KEY{Rule}`, `\KEY{Built-in Funcon}`, ...
+`amsmath`
+: Provides various environments and commands for math alignment, including `align*` and `aligned`.
 
-  SVG Bug: `\KEY{...} ~ \KEY{...}` overlays the keywords
+`amssymb`
+: Provides an extended math symbol collection, including $$\leadsto$$.
 
-`\VAR{Variable}`
+`stmaryrd`
+: Provides symbols for TCS, including `\llbracket` and `\rrbracket` ($$\LEFTPHRASE$$ and $$\RIGHTPHRASE$$).
 
-: Multi-character words used as variables in (syntax or funcon) patterns, not including primes, subscripts, or superscripts:
+`textcomp`[^implicit]
+: Provides commands for various characters in text mode, including `\textsinglequote` ($$\APOSTROPHE$$).
+
+`xcolor`
+: The `dvipsnames` option provides the same names for colors as MathJax.
+
+`hyperref`
+: Needed for creating hyperlinks. The `hidelinks` option avoids the appearance of coloured boxes around references to names in CBS specifications.
+
+The following packages are not required, but using them may make the formatting of running text in $$\LATEX$$ closer to that produced from Markdown on web pages:
+
+`parskip`
+: Uses blank lines to separate paragraphs.
+
+`markdown`
+: Provides the `markdown` environment, which allows the use of Markdown markup in $$\LATEX$$ text mode.
+  For text that also contains $$\LATEX$$ math mode markup, add the package option `[hybrid]`.
   
-  `\VAR{VarsDecl}`, `\VAR{Block}_2`, ...
-  
-  Note: Single-character variables such as `X` do not need markup with `\VAR`, since that macro uses the standard math font.
-  
-  Currently, variables are not linked to their places of introduction.
-  
-  A `variable` either starts with an uppercase Latin letter, or it is single Greek letter ($$\rho$$, $$\Sigma$$, ...).
+  Warning: Use of `*`-environments inside the `markdown` environment may cause `pdflatex` to fail.
 
-`\LEX{Lexeme}`
+## Colors
 
-: Language keyword or separator, written `'...'` in plain CBS:
-  
-  `\LEX{if}`, `\LEX{;}`, `\LEX{\LBRACE}`, `\LEX{\RBRACE}`, ...
-  
-  `\LBRACE` and `\RBRACE` match the fixed-width font used for lexemes. 
-  Elsewhere, use `\{` and `\}`.
-  
-  Note: The quotes used in plain CBS would make grammars and semantic rules look messy, so they are omitted.
+The following four color macros are used internally by other macros.
+The tones of these colors differ between PDFs and web pages,
+and between light and dark color schemes on web pages.
+The default color of text and math symbols is black for PDFs, and either a dark gray or white for web pages.
+(Ideally, the colors should be distinguishable also to readers with color-impaired vision; this has not yet been checked.)
 
-`\STRING{Characters}`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Gray` | `{\GRAYCOLOR Gray}` | $${\GRAYCOLOR \textsf{Gray}}$$ |
+| `Red` | `{REDYCOLOR Red}` | $${\REDCOLOR \textsf{Red}}$$ |
+| `Green` | `{\GREENCOLOR Green}` | $${\GREENCOLOR \textsf{Green}}$$ |
+| `Blue` | `{\BLUECOLOR Blue}` | $${\BLUECOLOR \textsf{Blue}}$$ |
 
-: Literal CBS string, written `"..."` in plain CBS:
-  
-  `\STRING{Hello world!}`
-  
-  The macro encloses the argument in double quotes.
+Apart from the standard $$\LATEX$$ color names, the names defined by the `dvipsnames` option of the `xcolor` package (along with the `RGB`, `rgb`, and `grey-scale` color spaces) can be used for both PDFs and web pages.
 
-`\ATOM{Characters}`
+## Names
 
-: Literal CBS atom, written `'...'` in plain CBS:
-  
-  `\ATOM{location-42}`
-  
-  The macro encloses the argument in single quotes.
+CBS specifications involve declaration and reference of names for funcons, entities, syntax sorts, and semantic functions.
+The macro used for a name depends on the namespace.
+Names in different namespaces have different highlighting colors.
 
-### Names
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `funcon-name` | `\NAME{funcon-name}` | $$\NAME{funcon-name}$$ |
+| `entity-name` | `\NAME{entity-name}` | $$\NAME{entity-name}$$ |
+| `syntax-name` | `\SYN{syntax-name}` | $$\SYN{syntax-name}$$ |
+| `semantics-name` | `\SEM{semantics-name}` | $$\SEM{semantics-name}$$ |
+| `§2.1` | `\S\SECT{2.1}` | $$\S\SECT{2.1}$$ |
 
-`\NAME{Funcon-name}`
+### Hyperlinks
 
-: Funcon name:
-  
-  `\NAME{sequential}`, `\NAME{map-interleave}`
+The optional argument of a name markup macro indicates that the occurrence of the name is a declaration or a reference.
+In both PDFs and web pages, each name reference becomes a hyperlink to a declaration of that name.
+A name should not be declared (in the same namespace) more than once per file.
 
-  `\NAME[\DECL]{Funcon-name}` makes  `Funcon-name` a declaration.
-  
-  `\NAME[\REF]{Funcon-name}` makes  `Funcon-name` a hyperlink to its declaration on the same page.
-  
-  `\NAME[\HYPER{URL}]{Funcon-name}` makes  `Funcon-name` a hyperlink to its declaration on the page at the `URL`.
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `name` | `\NAME[\DECL]{name}` | $$\NAME{name}$$ |
+| `name` | `\NAME[\REF]{name}` | $$\NAME{name}$$ |
+| `name` | `\NAME[\HYPER{url}{file}]{name}` | $$\NAME{name}$$ |
 
-`\SYN{Syntax-name}`
+Similarly for `\SYN`, `\SEM`, `\SECT`.
 
-: Name of a syntax sort (non-terminal):
-  
-  `\SYN{exp}`, `\SYN{imp-stmt}`
+### Variables
 
-  `\SYN[\DECL]{Syntax-name}` makes  `Syntax-name` a declaration.
-  
-  `\SYN[\REF]{Syntax-name}` makes  `Syntax-name` a hyperlink to its declaration on the same page.
-  
-  `\SYN[\HYPER{URL}]{Syntax-name}` makes  `Syntax-name` a hyperlink to its declaration on the page at the `URL`.
+The macro for variables formats its argument in text mode.
+A Greek letter used as a variable has to be in math mode.
+Any primes, subscripts, and multiplicity come after the macro argument.
 
-`\SEM{Semantic-name}`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `X'` | `\VAR{X}'` | $$\VAR{X}'$$ |
+| `X12''` | `\VAR{X}\SUB{12}''` | $$\VAR{X}\SUB{12}''$$ |
+| `X+` | `\VAR{X}\PLUS` | $$\VAR{X}\PLUS$$ |
+| `X?` | `\VAR{X}\QUERY` | $$\VAR{X}\QUERY$$ |
+| `X*` | `\VAR{X}\STAR` | $$\VAR{X}\STAR$$ |
+| `Rho` | `\rho` or `\VAR{$\rho$}` | $$\VAR{$\rho$}$$ |
 
-: Name of a semantic function (translation):
-  
-  `\SEM{exp}`, `\SEM{imp-stmt}`
+## Language specifications
 
-  `\SEM[\DECL]{Semantic-name}` makes  `Semantic-name` a declaration.
-  
-  `\SEM[\REF]{Semantic-name}` makes  `Semantic-name` a hyperlink to its declaration on the same page.
-  
-  `\SEM[\HYPER{URL}]{Semantic-name}` makes  `Semantic-name` a hyperlink to its declaration on the page at the `URL`.
+### Grammars
 
-### Languages
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Lexis ...` | `\KEY{Lexis} ~ ...` | $$\KEY{Lexis} ~ \ldots$$ |
+| `Syntax ...` | `\KEY{Syntax} ~ ...` | $$\KEY{Syntax} ~ \ldots$$ |
+| `...:... ::= ...` | `...:... ::= ...` | $$\ldots:\ldots ::= \ldots$$ |
 
-`\GROUP{Phrase-type}`
+### Syntactic phrase types
 
-: Grouping in a regular expression, written `(...)` in plain CBS:
-  
-  `\GROUP{ \LEX{else} ~ \SYN[\REF]{block} }`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `syntax-name` | `\SYN{syntax-name}` | $$\SYN{syntax-name}$$ |
+| `'lexeme'` | `\LEX{lexeme}` | $$\LEX{lexeme}$$ |
+| `P_1 P_2` | `P_1 ~ P_2` | $$P_1 ~ P_2$$ |
+| `P_1 | P_2` | `P_1 \mid P_2` | $$P_1 \mid P_2$$ |
+| `P+` | `P\PLUS` | $$P\PLUS$$ |
+| `P?` | `P\QUERY` | $$P\QUERY$$ |
+| `P*` | `P\STAR` | $$P\STAR$$ |
+| `(P)` | `\LEFTGROUP P \RIGHTGROUP` | $$\LEFTGROUP P \RIGHTGROUP$$ |
 
-  Elsewhere, use `(` and `)`.
+### Lexemes
 
-`\MID`
+Characters in lexemes are marked up as follows.
+Those that require macros include all the special characters of $$\LATEX$$,
+and characters that look different in text and math mode.
 
-: Alternatives, written `...|...` in plain CBS:
-  
-  `\SYN{imp-stmt} \MID \SYN{vars-decl}`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `'0...9A...Za...z'` | `\LEX{0...9A...Za...z}` | $$\LEX{0...9A...Za...z}$$ |
+| `'!()*,./:;=?@[]'` | `\LEX{!()*,./:;=?@[]}` | $$\LEX{!()*,./:;=?@[]}$$ |
+| `'#'` | `\LEX{\HASH}` | $$\LEX{\HASH}$$ |
+| `'#'` | `\LEX{\DOLLAR}` | $$\LEX{\DOLLAR}$$ |
+| `'#'` | `\LEX{\PERCENT}` | $$\LEX{\PERCENT}$$ |
+| `'#'` | `\LEX{\AMPERSAND}` | $$\LEX{\AMPERSAND}$$ |
+| `'#'` | `\LEX{\APOSTROPHE}` | $$\LEX{\APOSTROPHE}$$ |
+| `'+'` | `\LEX{\PLUSCHAR}` | $$\LEX{\PLUSCHAR}$$ |
+| `'-'` | `\LEX{\HYPHEN}` | $$\LEX{\HYPHEN}$$ |
+| `'<'` | `\LEX{\LESS}` | $$\LEX{\LESS}$$ |
+| `'>'` | `\LEX{\GREATER}` | $$\LEX{\GREATER}$$ |
+| `'\\'` | `\LEX{\BACKSLASH}` | $$\LEX{\BACKSLASH}$$ |
+| `'^'` | `\LEX{\CARET}` | $$\LEX{\CARET}$$ |
+| `'_'` | `\LEX{\UNDERSCORE}` | $$\LEX{\UNDERSCORE}$$ |
+| ``'`'`` | `\LEX{\GRAVE}` | $$\LEX{\GRAVE}$$ |
+| `'{'` | `\LEX{\LEFTBRACE}` | $$\LEX{\LEFTBRACE}$$ |
+| `'|'` | `\LEX{\BAR}` | $$\LEX{\BAR}$$ |
+| `'}'` | `\LEX{\RIGHTBRACE}` | $$\LEX{\RIGHTBRACE}$$ |
+| `'~'` | `\LEX{\TILDE}` | $$\LEX{\TILDE}$$ |
 
-`\PLUS`, `\STAR`, `\QUERY`
+### Semantic functions
 
-: Iterations, written `+`, `*`, `?` in plain CBS:
-  
-  `\SYN{stmts}\QUERY`, ...
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+|  `Semantics s-n[[_:...]] : ...` | `\KEY{Semantics} ~ \SEM[\DECL]{s-n} \LEFTPHRASE\_:...\RIGHTPHRASE : ...` | $$\KEY{Semantics} ~ \SEM{s-n} \LEFTPHRASE \_ : \ldots \RIGHTPHRASE : \ldots$$ |
+| `Rule ... = ...` | `\KEY{Rule} ~ ... = ...` | $$\KEY{Rule} ~ \ldots = \ldots$$ |
+| `[[...]]` | `\LEFTPHRASE ... \RIGHTPHRASE` | $$\LEFTPHRASE \ldots \RIGHTPHRASE$$ |
+| `s-n[[...]]` | `\SEM[\REF]{s-n}\LEFTPHRASE ... \RIGHTPHRASE` | $$\SEM{s-n}\LEFTPHRASE \ldots \RIGHTPHRASE$$ |
 
-`\PHRASE{Syntax-pattern}`
+## Funcon specifications
 
-: Sequences of lexemes and variables, written `[[...]]` in plain CBS:
-  
-  `\PHRASE{ \LEX{if} ~ \LEX{(} ~ \VAR{Exp} ~ \LEX{)} ~ \VAR{Block} }`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Funcon f-n ... : ...` | `\KEY{Funcon} ~ \NAME[\DECL]{f-n} ... : ...` | $$\KEY{Funcon} ~ \NAME{f-n} \ldots : \ldots$$ |
+| `Alias f-n1 = f-n2` | `\KEY{Alias} ~ \NAME[\DECL]{f-n1} = \NAME[\REF]{f-n2}` | $$\KEY{Alias} ~ \NAME{f-n1} = \NAME{f-n2}$$ |
+| `Type f-n ...` | `\KEY{Type} ~ \NAME[\DECL]{f-n} ...` | $$\KEY{Type} ~ \NAME{f-n} \ldots$$ |
 
-### Signatures and rules
+### Datatype specifications
 
-`\RULE{Premises}{Conclusion}`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Datatype f-n ::= ...` | `\KEY{Datatype} ~ \NAME[\DECL]{f-n} ::= ...` | $$\KEY{Datatype} ~ \NAME{f-n} ::= \ldots$$ |
+| `... | ...` | `... \mid ...` | $$\ldots \mid \ldots$$ |
+| `f-n` | `\NAME[\DECL]{f-n}` | $$\NAME{f-n}$$ |
+| `f-n(...)` | `\NAME[\DECL]{f-n}(...)` | $$\NAME{f-n}(\ldots)$$ |
+| `{ _ : ... }` | `\{ ~ _ : ... ~ \}` | $$\{ ~ \_ : \ldots ~ \}$$ |
 
-: Inference rule, written `... ---- ...` in plain CBS.
+### Entity declarations
 
-  Separate multiple premises by `\quad`, or align them using `\begin{aligned}...\\...\end{aligned}`.
-  
-`\AXIOM{Conclusion}`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Entity ...` | `\KEY{Entity} ~ ...` | $$\KEY{Entity} ~ \ldots$$ |
+| `e-n(_:...)|- _ ---> _` | `\NAME[\DECL]{e-n}(\_:...) \vdash \_\TRANS\_` | $$\NAME{e-n}(\_ : \ldots) \vdash \_ \TRANS \_$$ |
+| `<_,e-n(_:...)> ---> <_,e-n(_:...)>` | `\langle\_,\NAME[\DECL]{e-n}(\_:...)\rangle \TRANS \langle\_,\NAME{e-n}(\_:...)\rangle` | $$\langle\_,\NAME{e-n}(\_:\ldots)\rangle \TRANS \langle\_,\NAME{e-n}(\_:\ldots)\rangle$$ |
+| `_ -- e-n.(_:...) -> _` | `\_\TRANS[{\NAME[\DECL]{e-n}.(\_:...)}]\_` | $$\_\TRANS[{\NAME{e-n}.(\_:\ldots)}]\_$$ |
 
-: Rule with no premises.
+The `.` in the last line above can be `!`, `?`, or omitted.
 
-`\TO`
+### Rules
 
-: Computation type, written `=> ...` in plain CBS:
-  
-  `\KEY{Funcon} ~ \NAME{initialise-binding}(X:\TO T) : \TO T`
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Rule ...` | `\KEY{Rule} ~ ...` | $$\KEY{Rule} ~ \ldots$$ |
+| `Rule ... ⏎ ...` | `\KEY{Rule} ~ \AXIOM{& ... \\ & ...}` | $$\KEY{Rule} ~ \AXIOM{& \ldots \\ & \ldots}$$ |
+| `Rule ... ⏎ ---- ⏎ ...` | `\KEY{Rule} ~ \RULE{...}{...}` | $$\begin{align*} \KEY{Rule} ~ \RULE{\ldots}{\ldots} \end{align*}$$ |
+| `Otherwise ...` | `\KEY{Otherwise} ~ ...` | $$\KEY{Otherwise} ~ \ldots$$ |
+| `Assert ...` | `\KEY{Assert} ~ ...` | $$\KEY{Assert} ~ \ldots$$ |
 
-`\TRANS`
+### Formulae
 
-: Transition, written `...--->...` in plain CBS:
-  
-  `\NAME{environment}(\NAME{map}(~)) \vdash X \TRANS X'`
-  
-  TBA: Macros for input/output/signal transitions.
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `... ~> ...` | `... \leadsto ...` | $$\ldots \leadsto \ldots$$ |
+| `... == ...` | `... == ...` | $$\ldots == \ldots$$ |
+| `... =/= ...` | `... \neq ...` | $$\ldots \neq \ldots$$ |
+| `... <: ...` | `... <: ...` | $$\ldots <: \ldots$$ |
+| `... ---> ...` | `... \TRANS ...` | $$\ldots \TRANS \ldots$$ |
+| `e-n(...)|- ...--->...` | `\NAME[\REF]{e-n}(...) \vdash ...\TRANS...` | $$\NAME{e-n}(\ldots) \vdash \ldots \TRANS \ldots$$ |
+| `<...,e-n(...)> ---> <...,e-n(...)>` | `\langle...,\NAME[\REF]{e-n}(...)\rangle \TRANS \langle...,\NAME{e-n}(...)\rangle` | $$\langle\ldots,\NAME{e-n}(\ldots)\rangle \TRANS \langle\ldots,\NAME{e-n}(\ldots)\rangle$$ |
+| `... -- e-n.(...) -> ...` | `...\TRANS[{\NAME[\DECL]{e-n}.(...)}]...` | $$\ldots\TRANS[{\NAME{e-n}.(\ldots)}]\ldots$$ |
 
-### Spacing, line breaks, and alignment
+The `.` in the last line above can be `!`, `?`, or omitted.
 
-`~`, `\quad`, `\qquad`
+### Terms
 
-: Space between symbols.
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `( )` | `( ~ )` | $$( ~ )$$ |
+| `'...'` | `\ATOM{...}` | $$\ATOM{...}$$ |
+| `42` | `42` | $$42$$ |
+| `2.14` | `2.14` | $$2.14$$ |
+| `"..."` | `\STRING{...}` | $$\STRING{...}$$ |
+| `... : ...` | `... : ...` | $$\ldots : \ldots$$ |
+| `... => ...` | `... \TO ...` | $$\ldots \TO \ldots$$ |
+| `...+` | `...\PLUS` | $$\ldots\PLUS$$ |
+| `...?` | `...\QUERY` | $$\ldots\QUERY$$ |
+| `...*` | `...\STAR` | $$\ldots\STAR$$ |
+| `... | ...` | `... \mid ...` | $$\ldots \mid \ldots$$ |
+| `... & ...` | `... \& ...` | $$\ldots \& \ldots$$ |
+| `...^N` | `...^{N}` | $$\ldots^{N}$$ |
+| `(..., ...)` | `(..., ...)` | $$(\ldots, \ldots)$$ |
+| `[..., ...]` | `[..., ...]` | $$[\ldots, \ldots]$$ |
+| `{..., ...}` | `\{..., ...\}` | $$\{\ldots, \ldots\}$$ |
+| `{...|->..., ...}` | `\{... \mapsto ..., \cdots\}` | $$\{\ldots \mapsto \ldots, \cdots\}$$ |
 
-`$$\begin{align*} ...&... \\ ...&... \end{align*}$$`
+### Other specifications
 
-: Break a displayed specification into lines, aligning on `&`.
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `Auxiliary K ...` | `\KEY{Auxiliary K} ~ ...` | $$\KEY{Auxiliary K} ~ \ldots$$ |
+| `Built-in K ...` | `\KEY{Built-in K} ~ ...` | $$\KEY{Built-in K} ~ \ldots$$ |
+| `Meta-variables ...` | `\KEY{Meta-variables} ~ ...` | $$\KEY{Meta-variables} ~ \ldots$$ |
 
-`\begin{aligned}[t] ...&... \\ ...&... \end{aligned}`
+## Alignment
 
-: Break part of a displayed specification into lines, aligning on `&`.
+| Plain CBS | $$\LATEX$$ | Formatted CBS |
+| - | - | - | 
+| `. .` | `.~.` | $$.~.$$ |
+| `. . .` | `.\quad.` | $$.\quad.$$ |
+| `. . . . .` | `.\qquad.` | $$.\qquad.$$ |
+| `... ... ⏎    ...` | `\begin{align*} ... ~ & ... \\ ~ & ... \end{align*}` | $$\begin{align*} \ldots ~ & \ldots \\ ~ & \ldots \end{align*}$$ |
+| `... ... ⏎    ...` | `... ~ \begin{aligned}[t] & ... \\ & ... \end{aligned}` | $$\ldots ~ \begin{aligned}[t] & \ldots \\ & \ldots \end{aligned}$$ |
 
-## MathJax macro definitions
+----
 
-The macro definitions used for MathJax are listed below.
-Corresponding definitions for use in $$\LaTeX$$ are to be added.
+[^implicit]:
+    The `textcomp` package is automatically loaded in recent $$\LATEX$$ distributions.
 
-> MathJax 3.1.1 does not yet support `\begingroup...\endgroup`.
-> To use the same macro definitions on different pages, it appears that they currently need to be specified (less perspicuously) in the MathJax configuration.
-
-```latex
-\newcommand{\KEY}[1]{\text{\color{Gray}\mit{#1}\;\;}}
-\newcommand{\VAR}[1]{\mathit{\small#1}\mspace2mu}
-\newcommand{\LEX}[1]{\mathtt{#1}}
-\newcommand{\LBRACE}{\unicode{x007b}}
-\newcommand{\RBRACE}{\unicode{x007d}}
-\newcommand{\STRING}[1]{\mathtt{\unicode{x201c}#1\unicode{x201d}}}
-\newcommand{\ATOM}[1]{\mathtt{\unicode{x2018}#1\unicode{x2019}}}
-
-\newcommand{\NAME}[2][\PLAIN]{#1{Name_#2}{\text{\color{Mahogany}#2}}}
-\newcommand{\SYN}[2][\PLAIN]{#1{SyntaxName_#2}{\text{\color{ForestGreen}#2}}}
-\newcommand{\SEM}[2][\PLAIN]{#1{SemanticsName_#2}{\text{\color{Blue}#2}}}
-
-\newcommand{\PLAIN}[1]{}
-\newcommand{\DECL}[1]{\cssId{#1}}
-\newcommand{\REF}[1]{\href{samples.html\##1}}
-\newcommand{\HYPER}[2]{#1{#2}}
-
-\newcommand{\GROUP}[1]{ {\color{Gray}(} #1 {\color{Gray})} }
-\newcommand{\MID}{\mathbin{|}}
-\newcommand{\PLUS}{^{\text{\bf+}}}
-\newcommand{\STAR}{^{\boldsymbol{\ast}}}
-\newcommand{\QUERY}{^{\text{\bf?}}}
-\newcommand{\PHRASE}[1]{[\![\, #1 \,]\!]}
-
-\newcommand{\RULE}[2]{\frac{#1}{#2}}
-\newcommand{\AXIOM}[1]{\begin{aligned}#1\end{aligned}}
-\newcommand{\TO}{\mathop{\Rightarrow}}
-\newcommand{\TRANS}{\longrightarrow}
-
-\newcommand{\LanguagesSIMPLE}[2]{\href{https://plancomps.github.io/CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-#1\##2}}
-\newcommand{\FunconsFlowing}[1]{\href{https://plancomps.github.io/CBS-beta/Funcons-beta/Computations/Normal/Flowing\##1}}
-\newcommand{\FunconsBinding}[1]{\href{samples.html\##1}}
-```
-
-## $$\LaTeX$$ macro definitions
-
-The macro definitions used for $$\LaTeX$$ are listed below.
-
-```latex
-\documentclass[fleqn]{article}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{parskip}
-\usepackage[hidelinks]{hyperref}
-
-\newcommand{\KEY}[1]{\textsf{\textit{\color{Gray}#1}}}
-\newcommand{\VAR}[1]{\mathit{\small#1}}
-\newcommand{\LEX}[1]{\text{\texttt{#1}}}
-\newcommand{\LBRACE}{\char`\{}
-\newcommand{\RBRACE}{\char`\}}
-\newcommand{\STRING}[1]{\text{``\texttt{#1}''}}
-\newcommand{\ATOM}[1]{\text{`\texttt{#1}'}}
-
-\newcommand{\NAME}[2][\PLAIN]{#1{Name_#2}{\textsf{\color{Mahogany}#2}}}
-\newcommand{\SYN}[2][\PLAIN]{#1{SyntaxName_#2}{\textsf{\color{ForestGreen}#2}}}
-\newcommand{\SEM}[2][\PLAIN]{#1{SemanticsName_#2}{\textsf{\color{Blue}#2}}}
-
-\newcommand{\PLAIN}[1]{}
-\newcommand{\DECL}[1]{\hypertarget{#1}}
-\newcommand{\REF}[1]{\hyperlink{#1}}
-\newcommand{\HYPER}[2]{#1{#2}}
-
-\newcommand{\GROUP}[1]{ {\color{Gray}(} #1 {\color{Gray})} }
-\newcommand{\PLUS}{^{\text{\bf+}}}
-\newcommand{\STAR}{^{\boldsymbol{\ast}}}
-\newcommand{\QUERY}{^{\text{\bf?}}}
-\newcommand{\PHRASE}[1]{[\![\, #1 \,]\!]}
-
-\newcommand{\RULE}[2]{\frac{#1}{#2}}
-\newcommand{\AXIOM}[1]{\begin{aligned}#1\end{aligned}}
-\newcommand{\TO}{\mathop{\Rightarrow}}
-\newcommand{\TRANS}{\longrightarrow}
-
-\newcommand{\LanguagesSIMPLE}[2]{\href{https://plancomps.github.io/CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-#1\##2}}
-\newcommand{\FunconsFlowing}[1]{\href{https://plancomps.github.io/CBS-beta/Funcons-beta/Computations/Normal/Flowing\##1}}
-\newcommand{\FunconsBinding}[1]{\REF{#1}}
-```
+[`cbs-latex.sty`]: latex/cbs-latex.txt
+[MathJax configuration]: mathjax/config.txt

@@ -1,0 +1,138 @@
+---
+layout: default
+title: "SIMPLE-3-Statements"
+mathjax: true
+parent: Samples
+
+---
+
+Language "SIMPLE"
+
+# $$\SECT[\DECL]{3}$$ Statements
+
+
+$$
+\begin{align*}
+  \KEY{Syntax} ~ 
+    \VAR[\DECL]{Block} : \SYN[\DECL]{block} &
+      ~ ::= ~ \LEX{\LEFTBRACE } ~ \SYN[\REF]{stmts}\QUERY ~ \LEX{\RIGHTBRACE }
+    \\
+    \VAR[\DECL]{Stmts} : \SYN[\DECL]{stmts} &
+      ~ ::= ~ \SYN[\REF]{stmt} ~ \SYN[\REF]{stmts}\QUERY
+    \\
+    \VAR[\DECL]{Stmt} : \SYN[\DECL]{stmt} &
+      \begin{aligned}[t]
+      ~ ::= ~ &
+      \SYN[\REF]{imp-stmt} \\
+      ~ \mid ~ &  \SYN[\HYPER{}{SIMPLE-4-Declarations}]{vars-decl}
+      \end{aligned}
+    \\
+    \VAR[\DECL]{ImpStmt} : \SYN[\DECL]{imp-stmt} &
+      \begin{aligned}[t]
+      ~ ::= ~ &
+      \SYN[\REF]{block} \\
+      ~ \mid ~ &  \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp} ~ \LEX{;} \\
+      ~ \mid ~ &  \LEX{if} ~ \LEX{(} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp} ~ \LEX{)} ~ \SYN[\REF]{block} ~ \LEFTGROUP \LEX{else} ~ \SYN[\REF]{block} \RIGHTGROUP\QUERY \\
+      ~ \mid ~ &  \LEX{while} ~ \LEX{(} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp} ~ \LEX{)} ~ \SYN[\REF]{block} \\
+      ~ \mid ~ &  \LEX{for} ~ \LEX{(} ~ \SYN[\REF]{stmt} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp} ~ \LEX{;} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp} ~ \LEX{)} ~ \SYN[\REF]{block} \\
+      ~ \mid ~ &  \LEX{print} ~ \LEX{(} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exps} ~ \LEX{)} ~ \LEX{;} \\
+      ~ \mid ~ &  \LEX{return} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp}\QUERY ~ \LEX{;} \\
+      ~ \mid ~ &  \LEX{try} ~ \SYN[\REF]{block} ~ \LEX{catch} ~ \LEX{(} ~ \SYN[\HYPER{}{SIMPLE-1-Lexical}]{id} ~ \LEX{)} ~ \SYN[\REF]{block} \\
+      ~ \mid ~ &  \LEX{throw} ~ \SYN[\HYPER{}{SIMPLE-2-Expressions}]{exp} ~ \LEX{;}
+      \end{aligned}
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Rule} ~ 
+    & \LEFTPHRASE ~ \LEX{if} ~ \LEX{(} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp} ~ \LEX{)} ~ \VAR[\REF]{Block} ~ \RIGHTPHRASE : \SYN[\REF]{stmt} = \\
+    & \LEFTPHRASE ~ \LEX{if} ~ \LEX{(} ~ \VAR{Exp} ~ \LEX{)} ~ \VAR{Block} ~ \LEX{else} ~ \LEX{\LEFTBRACE } ~ \LEX{\RIGHTBRACE } ~ \RIGHTPHRASE
+\\
+  \KEY{Rule} ~ 
+    & \LEFTPHRASE ~ \LEX{for} ~ \LEX{(} ~ \VAR[\REF]{Stmt} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp}\SUB{1} ~ \LEX{;} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp}\SUB{2} ~ \LEX{)} ~ \LEX{\LEFTBRACE } ~ \VAR[\REF]{Stmts} ~ \LEX{\RIGHTBRACE } ~ \RIGHTPHRASE : \SYN[\REF]{stmt} = \\
+    & \LEFTPHRASE ~ \LEX{\LEFTBRACE } ~ \VAR{Stmt} ~ \LEX{while} ~ \LEX{(} ~ \VAR{Exp}\SUB{1} ~ \LEX{)} ~ \LEX{\LEFTBRACE } ~ \LEX{\LEFTBRACE } ~ \VAR{Stmts} ~ \LEX{\RIGHTBRACE } ~ \VAR{Exp}\SUB{2} ~ \LEX{;} ~ \LEX{\RIGHTBRACE } ~ \LEX{\RIGHTBRACE } ~ \RIGHTPHRASE
+\end{align*}
+$$
+
+$$
+\begin{align*}
+  \KEY{Semantics} ~ 
+  & \SEM[\DECL]{exec} \LEFTPHRASE ~ \_ : \SYN[\REF]{stmts} ~ \RIGHTPHRASE  :  \TO \NAME[\HYPER{../../../../Funcons-beta/Values/Primitive}{Null}]{null-type} 
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{\LEFTBRACE } ~ \LEX{\RIGHTBRACE } ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Values/Primitive}{Null}]{null}
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{\LEFTBRACE } ~ \VAR[\REF]{Stmts} ~ \LEX{\RIGHTBRACE } ~ \RIGHTPHRASE  = \\&\quad
+      \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Stmts} ~ \RIGHTPHRASE 
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR[\REF]{ImpStmt} ~ \VAR[\REF]{Stmts} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Flowing}]{sequential}
+        (\SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{ImpStmt} ~ \RIGHTPHRASE , \\&\quad \quad 
+         \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Stmts} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR[\HYPER{}{SIMPLE-4-Declarations}]{VarsDecl} ~ \VAR[\REF]{Stmts} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Binding}]{scope}
+        (\SEM[\HYPER{}{SIMPLE-4-Declarations}]{declare} \LEFTPHRASE ~ \VAR{VarsDecl} ~ \RIGHTPHRASE , \\&\quad \quad 
+         \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Stmts} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR[\HYPER{}{SIMPLE-4-Declarations}]{VarsDecl} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Flowing}]{effect}
+        (\SEM[\HYPER{}{SIMPLE-4-Declarations}]{declare} \LEFTPHRASE ~ \VAR{VarsDecl} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp} ~ \LEX{;} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Flowing}]{effect}
+        (\SEM[\HYPER{}{SIMPLE-2-Expressions}]{rval} \LEFTPHRASE ~ \VAR{Exp} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{if} ~ \LEX{(} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp} ~ \LEX{)} ~ \VAR[\REF]{Block}\SUB{1} ~ \LEX{else} ~ \VAR[\REF]{Block}\SUB{2} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Flowing}]{if-else}
+        (\SEM[\HYPER{}{SIMPLE-2-Expressions}]{rval} \LEFTPHRASE ~ \VAR{Exp} ~ \RIGHTPHRASE , \\&\quad \quad 
+         \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Block}\SUB{1} ~ \RIGHTPHRASE , \\&\quad \quad 
+         \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Block}\SUB{2} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{while} ~ \LEX{(} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp} ~ \LEX{)} ~ \VAR[\REF]{Block} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Flowing}]{while}
+        (\SEM[\HYPER{}{SIMPLE-2-Expressions}]{rval} \LEFTPHRASE ~ \VAR{Exp} ~ \RIGHTPHRASE , \\&\quad \quad 
+         \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Block} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{print} ~ \LEX{(} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exps} ~ \LEX{)} ~ \LEX{;} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Interacting}]{print}
+        (\SEM[\HYPER{}{SIMPLE-2-Expressions}]{rvals} \LEFTPHRASE ~ \VAR{Exps} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{return} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp} ~ \LEX{;} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Abnormal}{Returning}]{return}
+        (\SEM[\HYPER{}{SIMPLE-2-Expressions}]{rval} \LEFTPHRASE ~ \VAR{Exp} ~ \RIGHTPHRASE )
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{return} ~ \LEX{;} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Abnormal}{Returning}]{return}
+        (\NAME[\HYPER{../../../../Funcons-beta/Values/Primitive}{Null}]{null})
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{try} ~ \VAR[\REF]{Block}\SUB{1} ~ \LEX{catch} ~ \LEX{(} ~ \VAR[\HYPER{}{SIMPLE-1-Lexical}]{Id} ~ \LEX{)} ~ \VAR[\REF]{Block}\SUB{2} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Abnormal}{Throwing}]{handle-thrown}
+        (\SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Block}\SUB{1} ~ \RIGHTPHRASE , \\&\quad \quad 
+         \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Binding}]{scope}
+           (\NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Binding}]{bind}
+              (\SEM[\HYPER{}{SIMPLE-1-Lexical}]{id} \LEFTPHRASE ~ \VAR{Id} ~ \RIGHTPHRASE , \\&\quad \quad \quad \quad 
+               \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Storing}]{allocate-initialised-variable}
+                 (\NAME[\HYPER{../../../../Funcons-beta/Values}{Value-Types}]{values}, \\&\quad \quad \quad \quad \quad 
+                  \NAME[\HYPER{../../../../Funcons-beta/Computations/Normal}{Giving}]{given})), \\&\quad \quad \quad 
+            \SEM[\REF]{exec} \LEFTPHRASE ~ \VAR{Block}\SUB{2} ~ \RIGHTPHRASE ))
+\\
+  \KEY{Rule} ~ 
+    & \SEM[\REF]{exec} \LEFTPHRASE ~ \LEX{throw} ~ \VAR[\HYPER{}{SIMPLE-2-Expressions}]{Exp} ~ \LEX{;} ~ \RIGHTPHRASE  = \\&\quad
+      \NAME[\HYPER{../../../../Funcons-beta/Computations/Abnormal}{Throwing}]{throw}
+        (\SEM[\HYPER{}{SIMPLE-2-Expressions}]{rval} \LEFTPHRASE ~ \VAR{Exp} ~ \RIGHTPHRASE )
+\end{align*}
+$$
