@@ -1,0 +1,37 @@
+! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
+
+!	33	exclamation markTry it
+"	34	quotation markTry it
+#	35	number signTry it
+$	36	dollar signTry it
+%	37	percent signTry it
+&	38	ampersandTry it
+'	39	apostropheTry it
+(	40	left parenthesisTry it
+)	41	right parenthesisTry it
+*	42	asteriskTry it
++	43	plus signTry it
+,	44	commaTry it
+-	45	hyphenTry it
+.	46	periodTry it
+/	47	slashTry it
+
+:	58	colonTry it
+;	59	semicolonTry it
+<	60	less-thanTry it
+=	61	equals-toTry it
+>	62	greater-thanTry it
+?	63	question markTry it
+@	64	at signTry it
+
+[	91	left square bracketTry it
+\	92	backslashTry it
+]	93	right square bracketTry it
+^	94	caretTry it
+_	95	underscoreTry it
+`	96	grave accentTry it
+
+{	123	left curly braceTry it
+|	124	vertical barTry it
+}	125	right curly braceTry it
+~	126	tilde

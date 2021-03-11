@@ -1,0 +1,7 @@
+@import "./custom/custom";
+
+{% if site.color_scheme == "light-or-dark" %}
+@media (prefers-color-scheme: dark) {
+  @import "./custom/custom-dark";
+}
+{% endif %}

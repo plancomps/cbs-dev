@@ -8,16 +8,16 @@ title: CBS-LaTeX
 email: plancomps@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   This site illustrates how CBS specifications of languages and funcons could be
-  formatted for the web using LaTeX, Markdown, and MathJax. One of the aims is
-  for CBS on web pages look like the CBS in published papers, using mathematical
-  symbols instead of plain text.
+  formatted for the web using LaTeX, Markdown, KaTeX, and MathJax.
+  One of the aims is for CBS on web pages look like the CBS in published papers,
+   using mathematical symbols instead of plain text.
 baseurl: "/cbs-latex" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 github_username:  plancomps-admin
 
 # Build settings
-remote_theme: pdmosses/just-the-docs@pages-and-collections
+remote_theme: pdmosses/just-the-docs@combination-rec-nav
 plugins:
   # - jekyll-feed
   - jekyll-remote-theme
@@ -40,4 +40,4 @@ compress_html:
   # ignore:
   #   envs: all
 
-color_scheme: light
+color_scheme: light-or-dark

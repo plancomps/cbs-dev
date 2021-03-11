@@ -86,3 +86,9 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 {% endif %}
+
+{%- comment -%}
+  Favicon: See https://stackoverflow.com/questions/1321878/how-to-prevent-favicon-ico-requests
+{%- endcomment -%}
+
+<link rel="icon" href="data:,">

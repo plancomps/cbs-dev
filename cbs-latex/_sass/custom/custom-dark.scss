@@ -1,0 +1,24 @@
+.MathJax, .katex {
+  .cbs-Key {
+    color: Gray;
+  }
+  .cbs-Name {
+    color: DarkOrange;
+  }
+  .cbs-SyntaxName {
+    color: MediumSeaGreen;
+  }
+  .cbs-SemanticsName {
+    color: DodgerBlue;
+  }
+  .cbs-PartVariable {
+    color: $body-text-color;
+  }
+  .cbs-SectionNumber {
+    color: $body-text-color;
+  }
+}
+
+.search-input {
+  color: $body-text-color;
+}

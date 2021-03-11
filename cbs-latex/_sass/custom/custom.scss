@@ -1,4 +1,4 @@
-.MathJax {
+.MathJax, .katex {
   padding: $sp-3;
   margin-top: 0;
   margin-bottom: $sp-3;
@@ -9,14 +9,15 @@
 }
 
 p, li, a, dt, dd, td, th, h1, h2, h3, h4, h5, h6 {
-  > .MathJax {
+  > .MathJax, .katex {
     padding: 0.2em 0.15em;
     margin: 0;
   }
 }
 
-.MathJax a {
+.MathJax a, .katex a {
   color: $body-text-color;
+  background-image: none;
 }
 
 mjx-container[jax="SVG"] > svg a[href] {
@@ -24,3 +25,23 @@ mjx-container[jax="SVG"] > svg a[href] {
   stroke: $body-text-color;
 }
       
+.MathJax, .katex {
+  .cbs-Key {
+    color: Gray;
+  }
+  .cbs-Name {
+    color: DeepPink;
+  }
+  .cbs-SyntaxName {
+    color: MediumSeaGreen;
+  }
+  .cbs-SemanticsName {
+    color: DarkBlue;
+  }
+  .cbs-PartVariable {
+    color: $body-text-color;
+  }
+  .cbs-SectionNumber {
+    color: $body-text-color;
+  }
+}
