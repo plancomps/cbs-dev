@@ -1,27 +1,40 @@
+% cbs-latex.sty
+%
 % {% raw %}
+
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{cbs-latex}[2021/01/02 CBS-LaTeX package]
+\ProvidesPackage{cbs-latex}[2021/03/12 CBS-LaTeX package]
 
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
 \RequirePackage{stmaryrd}
 \RequirePackage{textcomp}
-\RequirePackage[dvipsnames]{xcolor}
+\RequirePackage[svgnames]{xcolor}
 \RequirePackage[hidelinks]{hyperref}
 
+% The following colors are used for highlighting.
+% They are defined by the svgnames option of xcolor.
+
 \colorlet{Key}{Gray}
-\colorlet{Name}{Mahogany}
-\colorlet{SyntaxName}{ForestGreen}
+\colorlet{Name}{DarkRed}
+\colorlet{SyntaxName}{MediumSeaGreen}
 \colorlet{SemanticsName}{RoyalBlue}
 \colorlet{PartVariable}{Black}
 \colorlet{SectionNumber}{Black}
 
+% \SHADE{TEXT} produces a faint grey background for CBS notation in running text.
+% To remove it, redefine \SHADE to be vacuous.
+
 \newcommand{\SHADE}[1]{{\setlength{\fboxsep}{0pt}\colorbox{gray!10}{$\strut#1\strut$}}}
 
+% \KEY{TEXT}, \STRING{TEXT}, \ATOM{TEXT}, \LEX{TEXT} are used in math mode.
+
 \newcommand{\KEY}[1]{\textsf{\textsl{\color{Key}#1}}}
-\newcommand{\STRING}[1]{\text{``\texttt{#1}''}}
-\newcommand{\ATOM}[1]{\text{`\texttt{#1}'}}
+\newcommand{\STRING}[1]{\textsf{``\texttt{#1}''}}
+\newcommand{\ATOM}[1]{\textsf{`\texttt{#1}'}}
 \newcommand{\LEX}[1]{\text{\texttt{#1}}}
+
+% The following commands produce ASCII characters that are treated specially by LaTeX.
 
 \newcommand{\HASH}{\char`\#}
 \newcommand{\DOLLAR}{\char`\$}
@@ -81,18 +94,53 @@
 % (whereas \hypertarget and \hyperlink support only internal hyperlinks)
 % See https://tex.stackexchange.com/a/197244 regarding the use of \raisebox
 
+% \LEFTPHRASE MATH \RIGHTPHRASE produces [[ MATH ]]
+
 \newcommand{\LEFTPHRASE}{\llbracket}
 \newcommand{\RIGHTPHRASE}{\rrbracket}
+
+% \LEFTPHRASE MATH \RIGHTPHRASE produces ( MATH ) where the parentheses are
+% distinguishable from ordinary math parentheses
+
 \newcommand{\LEFTGROUP}{{\color{Key}(}}
 \newcommand{\RIGHTGROUP}{{\color{Key})}}
+
+% MATH\PLUS produces a superscript +
+% MATH\STAR produces a superscript *
+% MATH\QUERY produces a superscript ?
+
 \newcommand{\PLUS}{^{\textsf{\tiny\bf+}}}
 \newcommand{\STAR}{^{\raisebox{-0.5ex}{\textsf{\scriptsize*}}}}
 \newcommand{\QUERY}{^{\raisebox{-0.5ex}{\textsf{\scriptsize?}}}}
 
-\newcommand{\RULE}[2]{\frac{\begin{aligned}#1\end{aligned}}{\begin{aligned}#2\end{aligned}}}
+% \RULE{PREMISE \\ ...}{& FORMULA ... \\ & ...} produces an inference rule
+% with centered premises and aligned conclusion
+%   PREMISE
+%     ...
+% -----------
+% FORMULA ...
+% ...
+
+\newcommand{\RULE}[2]
+{\frac{\begin{gathered}#1\end{gathered}}{\begin{aligned}#2\end{aligned}}}
+
+% \AXIOM{& FORMULA ... \\ & ...} produces an aligned formula
+%
+% FORMULA ...
+% ...
+
 \newcommand{\AXIOM}[1]{\begin{aligned}#1\end{aligned}}
+
+% \TO TYPE produces => TYPE
+
 \newcommand{\TO}{\mathop{\Rightarrow}}
-\newcommand{\TRANS}[1][]{\xrightarrow{~#1~}}
+
+% TERM \TRANS TERM produces TERM --> TERM
+
+\newcommand{\TRANS}{\longrightarrow}
+
+% TERM \xrightarrow{LABEL} TERM puts the label above the long arrow
 
 \newcommand{\LATEX}{\textsf{\LaTeX}}
+
 % {% endraw %}
