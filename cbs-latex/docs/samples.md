@@ -1,20 +1,45 @@
 ---
 title: Samples
 math: katex
-has_children: true
 ---
 
 # Samples
 
-Two CBS specifications from the [CBS-beta] repository illustrate the use of the `cbs-latex` package to produce PDFs and web pages:
+The following samples illustrate how plain CBS specifications can be marked up
+using the CBS-LaTeX macros, and the resulting PDFs and web pages.
 
-| Literate CBS | $$\LATEX$$ |     PDF    |  kramdown  |   $$\KaTeX$$    |
-| :-------: | :--------: | :--------: | :--------: | :--------: |
-| [Binding](cbs/Binding.cbs.txt) | [CBS-LaTeX](latex/Binding/Binding.part.tex.txt) | [PDF](latex/Binding/Binding.pdf) | [Markdown](kramdown/Binding.md.txt) | [HTML](katex/Binding) |
-| [SIMPLE-3-Statements](cbs/SIMPLE-3-Statements.cbs.txt) | [CBS-LaTeX](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.part.tex.txt) | [PDF](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.pdf) | [Markdown](kramdown/Binding.md.txt) | [HTML](katex/SIMPLE-3-Statements) |
-| [Tests](cbs/Tests.cbs.txt)  | [CBS-LaTeX](latex/Tests/Tests.part.tex.txt) | [PDF](latex/Tests/Tests.pdf) | [Markdown](kramdown/Tests.md.txt) | [HTML](katex/Tests) |
+## Funcon specifications
 
-## Browsing
+[CBS-beta/Funcons-beta/Computations/Normal/Binding](https://plancomps.github.io/CBS-beta/Funcons-beta/Computations/Normal/Binding):
+
+> [Plain CBS](cbs/Binding.cbs.txt) \|
+  [CBS-LaTeX](latex/Binding/Binding.part.tex.txt) \|
+  [PDF](latex/Binding/Binding.pdf) \|
+  [Markdown](kramdown/Binding.md.txt) \|
+  [Web](katex/Binding)
+
+## Language specifications
+
+[CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-3-Statements](https://plancomps.github.io/CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-3-Statements):
+
+> [Plain CBS](cbs/SIMPLE-3-Statements.cbs.txt) \|
+  [CBS-LaTeX](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.part.tex.txt) \|
+  [PDF](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.pdf) \|
+  [Markdown](kramdown/Binding.md.txt) \|
+  [Web](katex/SIMPLE-3-Statements)
+
+## ASCII tests
+
+The ASCII tests show how various characters used in language grammars are marked up
+using the CBS-LaTeX macros, and used to produce a PDF and a web page:
+
+> [Plain CBS](cbs/Tests.cbs.txt)  \|
+  [CBS-LaTeX](latex/Tests/Tests.part.tex.txt) \|
+  [PDF](latex/Tests/Tests.pdf) \|
+  [Markdown](kramdown/Tests.md.txt) \|
+  [Web](katex/Tests) 
+
+# Browsing
 
 PDFs
 : Acrobat Reader is recommended. The Preview app on macOS does not support hyperlinks from references to declarations, which are used for navigation in multi-file CBS specifications.
@@ -22,7 +47,7 @@ PDFs
 Web pages
 : In the browser, the LaTeX markup is rendered significantly faster by KaTeX than by MathJax. The appearance of the web pages (at least when using recent versions of Firefox and Safari) is close to that of the PDFs produced from the same CBS files using pdflatex.
 
-## Production
+# Production
 
 A literate CBS source file is a Markdown text that includes plain CBS notation in code blocks.
 Using the kramdown variant of Markdown, the CBS code blocks can be replaced by math blocks with LaTeX markup.
@@ -53,4 +78,4 @@ Production of a PDF and a web page from a literate CBS source file involves the 
     The CBS grammar resembles a so-called island grammar, where the islands are the formal notation, and the water is informal text.
     Currently, the shores of the islands are marked by comment delimiters `/*...*/` instead of the code fences used in Markdown.
 
-[CBS-beta]: https://plancomps.github.io/CBS-beta/
+{% include links.md %}

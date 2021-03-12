@@ -1,7 +1,7 @@
 ---
-title: MathJax SIMPLE-3-Statements
-math: mathjax3
-# parent: Samples
+title: SIMPLE-3-Statements using MathJax
+math: mathjax
+parent: Samples
 nav_exclude: true
 ---
 

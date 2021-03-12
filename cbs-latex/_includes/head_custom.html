@@ -4,9 +4,9 @@
 
 {% case page.math %}
   {% when "katex" %}
-    {% include katex.html %}
-  {% when "mathjax3" %}
-    {% include mathjax3.html %}
+    {% include cbs-katex.html %}
+  {% when "mathjax" %}
+    {% include cbs-mathjax.html %}
 {% endcase %}
 
 {%- comment -%}

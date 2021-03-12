@@ -1,7 +1,7 @@
 ---
-title: MathJax Binding
-math: mathjax3
-# parent: Samples
+title: Binding using MathJax
+math: mathjax
+parent: Samples
 nav_exclude: true
 ---
 
