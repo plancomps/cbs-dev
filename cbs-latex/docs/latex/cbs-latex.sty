@@ -3,36 +3,38 @@
 % {% raw %}
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{cbs-latex}[2021/03/12 CBS-LaTeX package]
+\ProvidesPackage{cbs-latex}[2021/03/27 CBS-LaTeX package]
 
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
 \RequirePackage{stmaryrd}
 \RequirePackage{textcomp}
 \RequirePackage[svgnames]{xcolor}
-\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{hyperref}
+% \hypersetup{filebordercolor={White}}
 
-% The following colors are used for highlighting.
-% They are defined by the svgnames option of xcolor.
+% The following color names are used by the highlighting macros.
+% They are set to colors defined by the svgnames option of xcolor,
+% and can be reset locally in LaTeX documents.
 
-\colorlet{Key}{Gray}
+\colorlet{Key}{Silver}
 \colorlet{Name}{DarkRed}
-\colorlet{SyntaxName}{MediumSeaGreen}
-\colorlet{SemanticsName}{RoyalBlue}
+\colorlet{SyntaxName}{SeaGreen}
+\colorlet{SemanticsName}{DarkBlue}
 \colorlet{PartVariable}{Black}
 \colorlet{SectionNumber}{Black}
 
-% \SHADE{TEXT} produces a faint grey background for CBS notation in running text.
-% To remove it, redefine \SHADE to be vacuous.
+\newcommand{\SHADE}[1]{\strut#1\strut}
+% The following definition of \SHADE{TEXT} produces a faint grey background
+% for CBS notation in running text:
+% \newcommand{\SHADE}[1]{{\setlength{\fboxsep}{0pt}\colorbox{gray!10}{$\strut#1\strut$}}}
 
-\newcommand{\SHADE}[1]{{\setlength{\fboxsep}{0pt}\colorbox{gray!10}{$\strut#1\strut$}}}
-
-% \KEY{TEXT}, \STRING{TEXT}, \ATOM{TEXT}, \LEX{TEXT} are used in math mode.
+% \KEY{TEXT}, \STRING{TEXT}, \ATOM{TEXT}, \LEX{TEXT} can be used in math mode.
 
 \newcommand{\KEY}[1]{\textsf{\textsl{\color{Key}#1}}}
 \newcommand{\STRING}[1]{\textsf{``\texttt{#1}''}}
 \newcommand{\ATOM}[1]{\textsf{`\texttt{#1}'}}
-\newcommand{\LEX}[1]{\text{\texttt{#1}}}
+\newcommand{\LEX}[1]{\textsf{{\color{Key}`}\texttt{#1}{\color{Key}'}}}
 
 % The following commands produce ASCII characters that are treated specially by LaTeX.
 
@@ -60,8 +62,8 @@
 
 % PLAIN
 
-\newcommand{\VAR}[1]{\textcolor{PartVariable}{\textsf{\textsl{#1}}}}
-\newcommand{\NAME}[1]{\textstyle\mathop{\textcolor{Name}{\textsf{#1}}}}
+\newcommand{\VAR}[1]{\textcolor{PartVariable}{\textsl{#1\/}}}
+\newcommand{\NAME}[1]{\textcolor{Name}{\textsf{#1}}}
 \newcommand{\SYN}[1]{\textcolor{SyntaxName}{\textsf{#1}}}
 \newcommand{\SEM}[1]{\textcolor{SemanticsName}{\textsf{#1}}}
 \newcommand{\SECT}[1]{\textcolor{SectionNumber}{\text{\bf #1}}}
@@ -94,13 +96,23 @@
 % (whereas \hypertarget and \hyperlink support only internal hyperlinks)
 % See https://tex.stackexchange.com/a/197244 regarding the use of \raisebox
 
+% \NOHYPER stops the HYPER commands from producing links
+
+\newcommand{\NOHYPER}{
+\global\def\VARHYPER##1##2##3{\VAR{##3}}
+\global\def\NAMEHYPER##1##2##3{\NAME{##3}}
+\global\def\SYNHYPER##1##2##3{\SYN{##3}}
+\global\def\SEMHYPER##1##2##3{\SEM{##3}}
+\global\def\SECTHYPER##1##2##3{\SECT{##3}}
+}
+
 % \LEFTPHRASE MATH \RIGHTPHRASE produces [[ MATH ]]
 
 \newcommand{\LEFTPHRASE}{\llbracket}
 \newcommand{\RIGHTPHRASE}{\rrbracket}
 
-% \LEFTPHRASE MATH \RIGHTPHRASE produces ( MATH ) where the parentheses are
-% distinguishable from ordinary math parentheses
+% \LEFTGROUP MATH \RIGHTGROUP produces ( MATH ) where the parentheses are
+% highlighted the same color as keywords
 
 \newcommand{\LEFTGROUP}{{\color{Key}(}}
 \newcommand{\RIGHTGROUP}{{\color{Key})}}
@@ -109,12 +121,12 @@
 % MATH\STAR produces a superscript *
 % MATH\QUERY produces a superscript ?
 
-\newcommand{\PLUS}{^{\textsf{\tiny\bf+}}}
-\newcommand{\STAR}{^{\raisebox{-0.5ex}{\textsf{\scriptsize*}}}}
-\newcommand{\QUERY}{^{\raisebox{-0.5ex}{\textsf{\scriptsize?}}}}
+\newcommand{\PLUS}{{}^{\textsf{\scriptsize+}}}
+\newcommand{\STAR}{{}^{\raisebox{-0.5ex}{\textsf{\scriptsize*}}}}
+\newcommand{\QUERY}{{}^{\raisebox{-0.5ex}{\textsf{\scriptsize?}}}}
 
-% \RULE{PREMISE \\ ...}{& FORMULA ... \\ & ...} produces an inference rule
-% with centered premises and aligned conclusion
+% \RULE{& PREMISE \\ & ...}{& FORMULA ... \\ & ...} produces an inference rule
+% with separately aligned premises and conclusion
 %   PREMISE
 %     ...
 % -----------
@@ -122,7 +134,7 @@
 % ...
 
 \newcommand{\RULE}[2]
-{\frac{\begin{gathered}#1\end{gathered}}{\begin{aligned}#2\end{aligned}}}
+{\frac{\begin{aligned}#1\end{aligned}}{\begin{aligned}#2\end{aligned}}}
 
 % \AXIOM{& FORMULA ... \\ & ...} produces an aligned formula
 %
@@ -135,7 +147,7 @@
 
 \newcommand{\TO}{\mathop{\Rightarrow}}
 
-% TERM \TRANS TERM produces TERM --> TERM
+% TERM \TRANS TERM produces TERM ---> TERM
 
 \newcommand{\TRANS}{\longrightarrow}
 

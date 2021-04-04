@@ -61,12 +61,18 @@ When used with $$\LATEX$$, the `cbs-latex` package requires the following packag
 : The `svgnames` option provides color names that can also be used on web pages (see the [W3schools Colors Tutorial]).
 
 `hyperref`
-: Needed for creating hyperlinks. Use the `hidelinks` option to avoid colored boxes around references to names in CBS specifications.
+: Needed for creating hyperlinks. Use `\hypersetup{filebordercolor=White}` to avoid colored boxes around references to names in CBS specifications.
 
 [^implicit]:
     The `textcomp` package is automatically loaded in recent $$\LATEX$$ distributions.
 
-The following package is not required, but using it may make the formatting of running text in $$\LATEX$$ closer to that produced from Markdown on web pages:
+The following packages are not required, but using them may make the formatting of running text in $$\LATEX$$ closer to that produced from Markdown on web pages:
+
+`cmbright`
+: Global sans-serif fonts.
+
+`geometry`
+: Allows adjustment of page dimensions. Set in the preamble, e.g., `\geometry{a4paper, textwidth=150mm, top=10mm, bottom=20mm, footnotesep=10mm plus 10mm}`.
 
 `parskip`
 : Uses blank lines to separate paragraphs.
@@ -262,7 +268,7 @@ The `.` in the last line above should be `!`, `?`, or omitted.
 
 | Plain CBS | CBS-LaTeX | Formatted CBS |
 | - | - | - | 
-| `... ...` | `...~...` | $$\ldots~\ldots$$ |
+| `... ...` | `... \ ...` | $$\ldots \ \ldots$$ |
 | `...   ...` | `...\quad...` | $$\ldots\quad\ldots$$ |
 | `...      ...` | `...\qquad...` | $$\ldots\qquad\ldots$$ |
 | `... ... ⏎    ...` | `\begin{aligned} ... ~ & ... \\ ~ & ... \end{aligned}` | $$\begin{aligned} \ldots ~ & \ldots \\ ~ & \ldots \end{aligned}$$ |

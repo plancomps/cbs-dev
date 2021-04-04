@@ -20,14 +20,24 @@ p, li, a, dt, dd, td, th, h1, h2, h3, h4, h5, h6 {
   background-image: none;
 }
 
+// Potential workaround for KaTeX 0.13.0 bug https://github.com/KaTeX/KaTeX/issues/2815
+
+.katex .vlist-t2 > .vlist-r:nth-child(2) > .vlist {
+  pointer-events: none;
+}
+
+// Links in MathJax
+
 mjx-container[jax="SVG"] > svg a[href] {
   fill: $body-text-color;
   stroke: $body-text-color;
 }
+
+// CBS highlighting
       
 .MathJax, .katex {
   .cbs-Key {
-    color: Gray;
+    color: Silver;
   }
   .cbs-Name {
     color: DarkRed;

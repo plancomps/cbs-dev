@@ -15,7 +15,7 @@
         KEY: ['\\textit{\\class{cbs-Key}{#1}} ~', 1],
         STRING: ['\\text{\\unicode{x201c}#1\\unicode{x201d}}', 1],
         ATOM: ['\\text{\\unicode{x2018}#1\\unicode{x2019}}', 1],
-        LEX: ['\\mathtt{#1}', 1],
+        LEX: ['\\class{cbs-Key}{\\unicode{x2018}}\\mathtt{#1}\\class{cbs-Key}{\\unicode{x2019}}', 1],
         
         HASH: '\\unicode{x0023}',
         DOLLAR: '\\unicode{x0024}',
@@ -33,7 +33,7 @@
         SUB: ['_{\\mskip{-2mu}\\textsf{#1}}', 1],
 
         VAR: ['\\htmlClass{cbs-PartVariable}{\\textit{#1}}\\mskip{2mu}', 1],
-        NAME: ['\\textstyle\\mathop{\\htmlClass{cbs-Name}{\\textsf{#1}}}', 1],
+        NAME: ['\\htmlClass{cbs-Name}{\\textsf{#1}}', 1],
         SYN: ['\\htmlClass{cbs-SyntaxName}{\\textsf{#1}}', 1],
         SEM: ['\\htmlClass{cbs-SemanticsName}{\\textsf{#1}}', 1],
         SECT: ['\\htmlClass{cbs-SectionNumber}{\\textsf{#1}}', 1],
@@ -54,7 +54,7 @@
         NAMEHYPER: ['\\href{#1/#2/#2.html##Name%3A#3}{\\NAME{#3}}', 3],
         SYNHYPER: ['\\href{#1/#2/#2.html##SyntaxName%3A#3}{\\SYN{#3}}', 3],
         SEMHYPER: ['\\href{#1/#2/#2.html##SemanticsName%3A#3}{\\SEM{#3}}', 3],
-        SECTHYPER: ['\\href{#1/#2/#2.html##SectionNumber%3A#3}\\SECT{#3}}', 3],
+        SECTHYPER: ['\\href{#1/#2/#2.html##SectionNumber%3A#3}{\\SECT{#3}}', 3],
 
         LEFTPHRASE: '[\\![',
         RIGHTPHRASE: ']\\!]',
@@ -64,7 +64,7 @@
         STAR: '^{\\smash{\\boldsymbol{\\ast}}}',
         QUERY: '^{\\smash{\\text{\\bf?}}}',
 
-        RULE: ['\\frac{\\begin{gathered}#1\\end{gathered}}{\\begin{aligned}#2\\end{aligned}}', 2],
+        RULE: ['\\frac{\\begin{aligned}#1\\end{aligned}}{\\begin{aligned}#2\\end{aligned}}', 2],
         AXIOM: ['\\begin{aligned}[t]#1\\end{aligned}', 1],
         TO: '\\mathop{\\Rightarrow}',
         TRANS: '\\longrightarrow',

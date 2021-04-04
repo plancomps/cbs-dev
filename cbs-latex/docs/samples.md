@@ -13,9 +13,9 @@ using the CBS-LaTeX macros, and the resulting PDFs and web pages.
 [CBS-beta/Funcons-beta/Computations/Normal/Binding](https://plancomps.github.io/CBS-beta/Funcons-beta/Computations/Normal/Binding):
 
 > [Plain CBS](cbs/Binding.cbs.txt) \|
-  [CBS-LaTeX](latex/Binding/Binding.part.tex.txt) \|
+  [CBS-LaTeX](latex/Binding/Binding.part.tex.html) \|
   [PDF](latex/Binding/Binding.pdf) \|
-  [Markdown](kramdown/Binding.md.txt) \|
+  [Markdown](kramdown/Binding.md.html) \|
   [Web](katex/Binding)
 
 ## Language specifications
@@ -23,9 +23,9 @@ using the CBS-LaTeX macros, and the resulting PDFs and web pages.
 [CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-3-Statements](https://plancomps.github.io/CBS-beta/Languages-beta/SIMPLE/SIMPLE-cbs/SIMPLE/SIMPLE-3-Statements):
 
 > [Plain CBS](cbs/SIMPLE-3-Statements.cbs.txt) \|
-  [CBS-LaTeX](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.part.tex.txt) \|
+  [CBS-LaTeX](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.part.tex.html) \|
   [PDF](latex/SIMPLE-3-Statements/SIMPLE-3-Statements.pdf) \|
-  [Markdown](kramdown/Binding.md.txt) \|
+  [Markdown](kramdown/SIMPLE-3-Statements.md.html) \|
   [Web](katex/SIMPLE-3-Statements)
 
 ## ASCII tests
@@ -33,11 +33,11 @@ using the CBS-LaTeX macros, and the resulting PDFs and web pages.
 The ASCII tests show how various characters used in language grammars are marked up
 using the CBS-LaTeX macros, and used to produce a PDF and a web page:
 
-> [Plain CBS](cbs/Tests.cbs.txt)  \|
-  [CBS-LaTeX](latex/Tests/Tests.part.tex.txt) \|
-  [PDF](latex/Tests/Tests.pdf) \|
-  [Markdown](kramdown/Tests.md.txt) \|
-  [Web](katex/Tests) 
+> [Plain CBS](cbs/TEST-Start.cbs.txt)  \|
+  [CBS-LaTeX](latex/TEST-Start/TEST-Start.part.tex.html) \|
+  [PDF](latex/TEST-Start/TEST-Start.pdf) \|
+  [Markdown](kramdown/TEST-Start.md.html) \|
+  [Web](katex/TEST-Start) 
 
 # Browsing
 
@@ -64,13 +64,50 @@ Production of a PDF and a web page from a literate CBS source file involves the 
 3. The `kramdown` converter generates LaTeX source files from the kramdown files.
 
 4. `pdflatex` produces PDFs by inputting the generated LaTeX source files in a document template with the `cbs-latex` package.
-   The LaTeX definitions of the highlighting colours can be overridden by editing the template (the `dvipsnames` colours are pre-loaded).
+   The LaTeX definitions of the highlighting colours can be overridden using `\colorlet{...}{...}` (the `svgnames` colours are pre-loaded).
 
 5. The `kramdown` converter automatically generates HTML pages from the kramdown files when building a website on GitHub Pages (or locally) with Jekyll.
 
 6. The `KaTeX` package uses JavaScript and CSS in the browser to automatically render LaTeX code in HTML pages,
    with an option that provides the CBS-LaTeX macros.
    The CSS specifications of the highlighting colours can be overridden (the standard HTML colour names can be used).
+
+For the CBS-beta website, the above tool chain is currently automated by running the following commands in the `CBS-beta` root directory.
+
+For each CBS project of funcon or language specifications, Spoofax Sunshine builds the project and transforms all its CBS files to kramdown (steps 1 and 2):
+```
+java -Xss16M -jar sunshine2.jar build --language ../cbs-beta-tools/CBS --transform-goal "One Math" --project ...
+```
+
+Generation of all kramdown files with embedded HTML:
+```
+make docs 2>&1 | tee make-docs.log
+```
+
+Generation of all kramdown files with embedded LaTeX:
+```
+make math 2>&1 | tee make-math.log
+```
+
+Generation of stale or missing LaTeX files by `kramdown`:
+```
+make kramdown
+```
+which executes for each `FILE.md`:
+```
+kramdown -o latex --latex-headers "section*,subsection*,subsubsection*,paragraph*,subparagraph*,subparagraph*" FILE.md > FILE.part.tex
+```
+
+Generation of stale or missing PDF files by `pdflatex`:
+```
+make pdflatex
+```
+which executes for each `FILE.part.tex`:
+```
+pdflatex FILE
+pdflatex FILE
+```
+to produce `FILE.pdf`.
 
 ----
 

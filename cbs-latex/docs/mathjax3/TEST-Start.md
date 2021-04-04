@@ -1,11 +1,11 @@
 ---
-title: Funcon specifications - MathJax
+title: ASCII Tests - MathJax
 math: mathjax
 parent: Samples
 nav_exclude: true
 ---
 
-> This page is using MathJax. [See the same page using KaTeX](../katex/Binding). $$
+> This page is using MathJax. [See the same page using KaTeX](../katex/TEST-Start). $$
 \renewcommand{\VARHYPER}[3]{\VAR{#3}}
 \renewcommand{\NAMEHYPER}[3]{\NAME{#3}}
 \renewcommand{\SYNHYPER}[3]{\SYN{#3}}
@@ -13,4 +13,4 @@ nav_exclude: true
 \renewcommand{\SECTHYPER}[3]{\SECT{#3}}
 $$
 
-{% include kramdown/Binding.md %}
+{% include kramdown/TEST-Start.md %}
