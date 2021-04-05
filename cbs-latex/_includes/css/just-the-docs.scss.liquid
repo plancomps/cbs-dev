@@ -2,18 +2,30 @@
 {% if site.logo %}
 $logo: "{{ site.logo | absolute_url }}";
 {% endif %}
+
 @import "./support/support";
-{% if include.color_scheme == "light-or-dark" %}
-@import "./color_schemes/light";
-@import "./modules";
-{% include css/custom.scss.liquid %}
-@media (prefers-color-scheme: dark) {
-  @import "./color_schemes/dark";
-  @import "./modules";
-  {% include css/custom.scss.liquid %}
-}
+
+{% if include.color_scheme == "auto_dark" %}
+
+{% if site.color_scheme and site.color_scheme != "nil" %}
+  {% assign light_color_scheme = site.color_scheme %}
 {% else %}
+  {% assign light_color_scheme = "light" %}
+{% endif %}
+
+@import "./color_schemes/{{ light_color_scheme }}";
+@import "./modules";
+{% include css/custom.scss.liquid color_scheme=light_color_scheme %}
+@media (prefers-color-scheme: dark) {
+  @import "./color_schemes/{{ site.auto_dark_scheme }}";
+  @import "./modules";
+  {% include css/custom.scss.liquid color_scheme="auto-dark" %}
+}
+
+{% else %}
+
 @import "./color_schemes/{{ include.color_scheme }}";
 @import "./modules";
-{% include css/custom.scss.liquid %}
+{% include css/custom.scss.liquid color_scheme=include.color_scheme %}
+
 {% endif %}

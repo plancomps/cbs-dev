@@ -31,10 +31,11 @@ Open a web browser at <http://localhost:4000/cbs-latex/> (the final `/` is requi
 
 Stop the local server with `Control-C` when no longer needed.
 
-The default color scheme is light. 
+The default color scheme for the web pages is `light`. 
 To browse in dark mode, set `color_scheme: dark` in `_config.yml` and restart
 `jekyll serve`.
-To follow the system/browser preference, set `color_scheme: light-or-dark`.
+To follow the system/browser preference, set `auto_dark_scheme: dark` instead of `color_scheme: dark`.
+The colors used for the `light` and `dark` schemes can be adjusted by editing the SCSS files in `_sass/custom`.
 
 ## Editing
 

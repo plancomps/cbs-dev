@@ -1,6 +1,6 @@
 @import "./custom/custom";
 
-{% if site.color_scheme == "light-or-dark" %}
+{% if include.color_scheme == "auto-dark" %}
 @media (prefers-color-scheme: dark) {
   @import "./custom/custom-dark";
 }

@@ -30,7 +30,8 @@ compress_html:
   # ignore:
   #   envs: all
 
-color_scheme: light-or-dark
+# color_scheme: light
+auto_dark_scheme: dark
 
 nav_next_prev: true
 
