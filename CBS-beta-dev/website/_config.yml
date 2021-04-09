@@ -8,7 +8,7 @@ url: "https://plancomps.github.io"
 
 aux_links:
   "CBS-beta-dev on GitHub (private)":
-    - "//github.com/plancomps/cbs-dev"
+    - "//github.com/plancomps/cbs-dev/tree/main/CBS-beta-dev/website"
 
 # logo: "/assets/images/PLanCompS-150.png"
 
