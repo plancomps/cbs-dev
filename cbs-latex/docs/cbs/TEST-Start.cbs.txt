@@ -1,7 +1,0 @@
-Language "Test"
-
-#2 Test
-
-Syntax
-  test ::= '! " # $ % & \' ( ) * + , - . / : ;'
-         | '< = > ? @ [ \\ ] ^ _ ` { | } ~ A Z a z 0 9'
