@@ -3,7 +3,7 @@ remote_theme: pdmosses/just-the-docs@combination-rec-nav
 title: CBS-beta-dev
 description: Temporary development site for CBS-beta
 
-baseurl: "/CBS-beta-dev"
+baseurl: "/cbs-dev"
 url: "https://plancomps.github.io"
 
 aux_links:
