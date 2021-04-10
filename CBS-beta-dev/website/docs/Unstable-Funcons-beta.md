@@ -9,5 +9,5 @@ nav_order: 4
 {% include navigation.md %}
   
 [Sources]: https://github.com/plancomps/CBS-beta/tree/math/Unstable-Funcons-beta
-[Plain]:  ../docs/Unstable-Funcons-beta
-[Pretty]: ../math/Unstable-Funcons-beta
+[Plain]:  ../docs/Unstable-Funcons-beta/
+[Pretty]: ../math/Unstable-Funcons-beta/
